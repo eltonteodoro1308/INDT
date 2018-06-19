@@ -55,7 +55,7 @@ WSSERVICE INDTA001 DESCRIPTION WS001
 
 ENDWSSERVICE
 
-/*/{Protheus.doc} MATA030_REQUEST
+/*/{Protheus.doc} CLIENTE
 Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisados.
 @author Elton Teodoro Alves
 @since 11/06/2018
@@ -229,7 +229,7 @@ Static Function ClienteMod( FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, SEND_DA0 )
 
 Return oModel
 
-/*/{Protheus.doc} MATA030_REQUEST
+/*/{Protheus.doc} PRODUTO
 Método do Web Service que retorna o XML com os dados do(s) produtos(s) pesquisados.
 @author Elton Teodoro Alves
 @since 11/06/2018
@@ -433,7 +433,7 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 
 Return oModel
 
-/*/{Protheus.doc} MATA030_REQUEST
+/*/{Protheus.doc} TRANSPORTADORA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
 @author Elton Teodoro Alves
 @since 11/06/2018
@@ -550,7 +550,7 @@ Static Function TranspMod( FIELDS_SA4 )
 
 Return oModel
 
-/*/{Protheus.doc} MATA030_REQUEST
+/*/{Protheus.doc} CONDICAO_PAGTO
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
 @author Elton Teodoro Alves
 @since 11/06/2018
