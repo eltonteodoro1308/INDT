@@ -16,44 +16,44 @@ Web Service para integração com protheus
 /*/
 WSSERVICE INDTA001 DESCRIPTION WS001
 
-	//-- Parâmetros Comuns aos métodos
-	WSDATA EMPRESA       AS STRING  OPTIONAL
-	WSDATA FILIAL        AS STRING  OPTIONAL
-	WSDATA TYPE_RESPONSE AS INTEGER OPTIONAL
-	WSDATA RESPONSE      AS STRING 
+//-- Parâmetros Comuns aos métodos
+WSDATA EMPRESA       AS STRING  OPTIONAL
+WSDATA FILIAL        AS STRING  OPTIONAL
+WSDATA TYPE_RESPONSE AS INTEGER OPTIONAL
+WSDATA RESPONSE      AS STRING 
 
-	//-- Parâmetros CLIENTE 
-	WSDATA FIELDS_SA1    AS STRING  OPTIONAL
-	WSDATA FIELDS_DA0    AS STRING  OPTIONAL
-	WSDATA FIELDS_DA1    AS STRING  OPTIONAL
-	WSDATA WHERE_SA1     AS STRING  OPTIONAL
-	WSDATA WHERE_DA1     AS STRING  OPTIONAL
-	WSDATA SEND_DA0      AS INTEGER OPTIONAL
+//-- Parâmetros CLIENTE 
+WSDATA FIELDS_SA1    AS STRING  OPTIONAL
+WSDATA FIELDS_DA0    AS STRING  OPTIONAL
+WSDATA FIELDS_DA1    AS STRING  OPTIONAL
+WSDATA WHERE_SA1     AS STRING  OPTIONAL
+WSDATA WHERE_DA1     AS STRING  OPTIONAL
+WSDATA SEND_DA0      AS INTEGER OPTIONAL
 
-	//-- Parâmetros PRODUTO
-	WSDATA FIELDS_SB1    AS STRING  OPTIONAL
-	WSDATA FIELDS_SB2    AS STRING  OPTIONAL
-	WSDATA FIELDS_SG1    AS STRING  OPTIONAL
-	WSDATA WHERE_SB1     AS STRING  OPTIONAL
-	WSDATA WHERE_SB2     AS STRING  OPTIONAL
-	WSDATA WHERE_SG1     AS STRING  OPTIONAL
-	WSDATA SEND_SB2      AS INTEGER OPTIONAL
-	WSDATA SEND_SG1      AS INTEGER OPTIONAL
+//-- Parâmetros PRODUTO
+WSDATA FIELDS_SB1    AS STRING  OPTIONAL
+WSDATA FIELDS_SB2    AS STRING  OPTIONAL
+WSDATA FIELDS_SG1    AS STRING  OPTIONAL
+WSDATA WHERE_SB1     AS STRING  OPTIONAL
+WSDATA WHERE_SB2     AS STRING  OPTIONAL
+WSDATA WHERE_SG1     AS STRING  OPTIONAL
+WSDATA SEND_SB2      AS INTEGER OPTIONAL
+WSDATA SEND_SG1      AS INTEGER OPTIONAL
 
-	//-- Parâmetros TRANSPORTADORA
-	WSDATA FIELDS_SA4    AS STRING OPTIONAL
-	WSDATA WHERE_SA4     AS STRING OPTIONAL
+//-- Parâmetros TRANSPORTADORA
+WSDATA FIELDS_SA4    AS STRING OPTIONAL
+WSDATA WHERE_SA4     AS STRING OPTIONAL
 
-	//-- Parâmetros CONDICAO_PAGTO 
-	WSDATA FIELDS_SE4    AS STRING OPTIONAL
-	WSDATA WHERE_SE4     AS STRING OPTIONAL
+//-- Parâmetros CONDICAO_PAGTO 
+WSDATA FIELDS_SE4    AS STRING OPTIONAL
+WSDATA WHERE_SE4     AS STRING OPTIONAL
 
-	WSMETHOD CLIENTE        DESCRIPTION CLIENTE001
-	WSMETHOD PRODUTO        DESCRIPTION PRODUTO001
-	WSMETHOD TRANSPORTADORA DESCRIPTION TRANSP001
-	WSMETHOD CONDICAO_PAGTO DESCRIPTION CONDPAG001
+WSMETHOD CLIENTE        DESCRIPTION CLIENTE001
+WSMETHOD PRODUTO        DESCRIPTION PRODUTO001
+WSMETHOD TRANSPORTADORA DESCRIPTION TRANSP001
+WSMETHOD CONDICAO_PAGTO DESCRIPTION CONDPAG001
 
-ENDWSSERVICE
+END WSSERVICE
 
 /*/{Protheus.doc} CLIENTE
 Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisados.
@@ -76,7 +76,7 @@ WSMETHOD CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, 
 	Local oModel     := Nil 
 	Local oGridSA1   := Nil
 	Local oGridDA1   := Nil 
-	Local lPrepInOn  := Type( 'cEmpAnt' ) # 'U'
+	Local oSetEnv    := SetEnv():New()
 
 	Default EMPRESA       := ''
 	Default FILIAL        := ''
@@ -88,21 +88,11 @@ WSMETHOD CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, 
 	Default SEND_DA0      := 2
 	Default TYPE_RESPONSE := 1
 
-	If ! lPrepInOn
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
-		If Empty( EMPRESA ) .Or. Empty(FILIAL)
+		::RESPONSE := oSetEnv:ErrorMessage
 
-			::RESPONSE := "Informe o Código a EMPRESA e da FILIAL para a abertura do ambiente."
-
-			Return .T.
-
-		ElseIf ! RpcSetEnv( EMPRESA, FILIAL )
-
-			::RESPONSE := "Não foi possível a abertura do ambiente."
-
-			Return .T.
-
-		End If
+		Return .T.
 
 	End If
 
@@ -160,11 +150,7 @@ WSMETHOD CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, 
 
 	oModel:DeActivate()
 
-	If ! lPrepInOn
-
-		RpcClearEnv()
-
-	End If
+	oSetEnv:Clear()
 
 Return .T.
 
@@ -253,7 +239,7 @@ WSMETHOD PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, 
 	Local oGridSB1   := Nil
 	Local oGridSB2   := Nil
 	Local oGridSG1   := Nil
-	Local lPrepInOn  := Type( 'cEmpAnt' ) # 'U'
+	Local oSetEnv    := SetEnv():New()
 
 	Default EMPRESA       := ''
 	Default FILIAL        := ''
@@ -267,21 +253,11 @@ WSMETHOD PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, 
 	Default SEND_SG1      := 2
 	Default TYPE_RESPONSE := 1
 
-	If ! lPrepInOn
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
-		If Empty( EMPRESA ) .Or. Empty(FILIAL)
+		::RESPONSE := oSetEnv:ErrorMessage
 
-			::RESPONSE := "Informe o Código a EMPRESA e da FILIAL para a abertura do ambiente."
-
-			Return .T.
-
-		ElseIf ! RpcSetEnv( EMPRESA, FILIAL )
-
-			::RESPONSE := "Não foi possível a abertura do ambiente."
-
-			Return .T.
-
-		End If
+		Return .T.
 
 	End If
 
@@ -359,11 +335,7 @@ WSMETHOD PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, 
 
 	oModel:DeActivate()
 
-	If ! lPrepInOn
-
-		RpcClearEnv()
-
-	End If
+	oSetEnv:Clear()
 
 Return .T.
 
@@ -449,7 +421,7 @@ WSMETHOD TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA4, TYPE_R
 
 	Local oModel     := Nil 
 	Local oGridSA4   := Nil
-	Local lPrepInOn  := Type( 'cEmpAnt' ) # 'U'
+	Local oSetEnv    := SetEnv():New()
 
 	Default EMPRESA       := ''
 	Default FILIAL        := ''
@@ -457,21 +429,11 @@ WSMETHOD TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA4, TYPE_R
 	Default WHERE_SA4     := ''
 	Default TYPE_RESPONSE := 1
 
-	If ! lPrepInOn
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
-		If Empty( EMPRESA ) .Or. Empty(FILIAL)
+		::RESPONSE := oSetEnv:ErrorMessage
 
-			::RESPONSE := "Informe o Código a EMPRESA e da FILIAL para a abertura do ambiente."
-
-			Return .T.
-
-		ElseIf ! RpcSetEnv( EMPRESA, FILIAL )
-
-			::RESPONSE := "Não foi possível a abertura do ambiente."
-
-			Return .T.
-
-		End If
+		Return .T.
 
 	End If
 
@@ -508,11 +470,7 @@ WSMETHOD TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA4, TYPE_R
 
 	oModel:DeActivate()
 
-	If ! lPrepInOn
-
-		RpcClearEnv()
-
-	End If
+	oSetEnv:Clear()
 
 Return .T.
 
@@ -566,7 +524,7 @@ WSMETHOD CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE4, TYPE_R
 
 	Local oModel     := Nil 
 	Local oGridSE4   := Nil
-	Local lPrepInOn  := Type( 'cEmpAnt' ) # 'U'
+	Local oSetEnv    := SetEnv():New()
 
 	Default EMPRESA       := ''
 	Default FILIAL        := ''
@@ -574,21 +532,11 @@ WSMETHOD CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE4, TYPE_R
 	Default WHERE_SE4     := ''
 	Default TYPE_RESPONSE := 1
 
-	If ! lPrepInOn
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
-		If Empty( EMPRESA ) .Or. Empty(FILIAL)
+		::RESPONSE := oSetEnv:ErrorMessage
 
-			::RESPONSE := "Informe o Código a EMPRESA e da FILIAL para a abertura do ambiente."
-
-			Return .T.
-
-		ElseIf ! RpcSetEnv( EMPRESA, FILIAL )
-
-			::RESPONSE := "Não foi possível a abertura do ambiente."
-
-			Return .T.
-
-		End If
+		Return .T.
 
 	End If
 
@@ -625,11 +573,7 @@ WSMETHOD CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE4, TYPE_R
 
 	oModel:DeActivate()
 
-	If ! lPrepInOn
-
-		RpcClearEnv()
-
-	End If
+	oSetEnv:Clear()
 
 Return .T.
 
@@ -703,3 +647,82 @@ Static Function LoadSM0(oFieldModel, lCopy, cAlias)
 	aAdd(aLoad, 1) 
 
 Return aLoad
+
+/*/{Protheus.doc} SetEnv
+Classe que controla a abertura do Ambiente
+@author Elton Teodoro Alves
+@since 21/06/2018
+@version 12.1.017
+/*/
+Class SetEnv
+
+	Data IsPrepInOn
+	Data ErrorMessage
+
+	Method New() Constructor
+	Method Set()
+	Method Clear()
+
+End Class
+
+/*/{Protheus.doc} New
+Método Construtor da Classe
+@author Elton Teodoro Alves
+@since 21/06/2018
+@version 12.1.017
+@return Objeto, Estância da Classe
+/*/
+Method New() Class SetEnv
+
+	::IsPrepInOn := Type( 'cEmpAnt' ) # 'U'
+
+Return Self
+
+/*/{Protheus.doc} Set
+Método que seta o ambiente
+@author Elton Teodoro Alves
+@since 21/06/2018
+@version 12.1.017
+@param cEmp, characters, Empresa do Ambiente
+@param cFil, characters, Filaial  do Ambiente
+@return Boolean, Indica se o Ambiente foi aberto com sucesso
+/*/
+Method Set( cEmp, cFil ) Class SetEnv
+
+	Local lRet := .T.
+
+	If ! ::IsPrepInOn
+
+		If Empty( cEmp ) .Or. Empty( cFil )
+
+			::ErrorMessage := "Informe o Código a EMPRESA e da FILIAL para a abertura do ambiente."
+
+			lRet := .F.
+
+		ElseIf ! RpcSetEnv( cEmp, cFil )
+
+			::ErrorMessage := "Não foi possível a abertura do ambiente."
+
+			lRet := .F.
+
+		End If
+
+	End If
+
+Return lRet
+
+/*/{Protheus.doc} Clear
+Método que libera o ambiente
+@author Elton Teodoro Alves
+@since 21/06/2018
+@version 12.1.017
+/*/
+Method Clear() Class SetEnv
+
+	If ! ::IsPrepInOn
+
+		RpcClearEnv()
+
+	End If
+
+Return
