@@ -1,8 +1,15 @@
-#DEFINE WS001      '<font face="verdana" color="red">WEB SERVICE DE INTEGRAÇÃO</font>'
-#DEFINE CLIENTE001 'MÉTODO DE PESQUISA DO CADASTRO DE CLIENTES'
-#DEFINE PRODUTO001 'MÉTODO DE PESQUISA DO CADASTRO DE PRODUTOS'
-#DEFINE TRANSP001  'MÉTODO DE PESQUISA DO CADASTRO DE TRANSPORTADORAS' 
-#DEFINE CONDPAG001 'MÉTODO DE PESQUISA DO CADASTRO DE CONDIÇÕES DE PGAMENTO'
+#DEFINE STR0199 'WEB SERVICE DE INTEGRAÇÃO'
+#DEFINE STR0299 'MÉTODO DE PESQUISA DO CADASTRO DE CLIENTES'
+#DEFINE STR0399 'MÉTODO DE PESQUISA DO CADASTRO DE PRODUTOS'
+#DEFINE STR0499 'MÉTODO DE PESQUISA DO CADASTRO DE TRANSPORTADORAS'
+#DEFINE STR0599 'MÉTODO DE PESQUISA DO CADASTRO DE CONDIÇÕES DE PGAMENTO'
+#DEFINE STR0699 ''
+#DEFINE STR0799 ''
+#DEFINE STR0899 'MÉTODO DE PESQUISA DE PEDIDO DE VENDA'
+#DEFINE STR0999 ''
+#DEFINE STR1099 '' 
+#DEFINE STR1199 ''
+#DEFINE STR1299 ''
 
 #INCLUDE 'TOTVS.CH'
 #INCLUDE 'FWMVCDEF.CH'
@@ -14,14 +21,15 @@ Web Service para integração com protheus
 @since 11/06/2018
 @version 12.1.017
 /*/
-WSSERVICE INDTA001 DESCRIPTION WS001
+WSSERVICE INDTA001 DESCRIPTION STR0199
 
 	WSDATA EMPRESA       AS STRING  OPTIONAL
 	WSDATA FILIAL        AS STRING  OPTIONAL
 	WSDATA TYPE_RESPONSE AS INTEGER OPTIONAL
-	WSDATA RESPONSE      AS STRING 
+	WSDATA RESPONSE      AS STRING
+	WSDATA RESULT_METHOD AS RESULT    
 
-	WSMETHOD CLIENTE DESCRIPTION CLIENTE001
+	WSMETHOD PESQUISA_CLIENTE DESCRIPTION STR0299
 	WSDATA FIELDS_SA1    AS STRING  OPTIONAL
 	WSDATA FIELDS_DA0    AS STRING  OPTIONAL
 	WSDATA FIELDS_DA1    AS STRING  OPTIONAL
@@ -29,7 +37,7 @@ WSSERVICE INDTA001 DESCRIPTION WS001
 	WSDATA WHERE_DA1     AS STRING  OPTIONAL
 	WSDATA SEND_DA0      AS INTEGER OPTIONAL
 
-	WSMETHOD PRODUTO DESCRIPTION PRODUTO001
+	WSMETHOD PESQUISA_PRODUTO DESCRIPTION STR0399
 	WSDATA FIELDS_SB1    AS STRING  OPTIONAL
 	WSDATA FIELDS_SB2    AS STRING  OPTIONAL
 	WSDATA FIELDS_SG1    AS STRING  OPTIONAL
@@ -39,15 +47,80 @@ WSSERVICE INDTA001 DESCRIPTION WS001
 	WSDATA SEND_SB2      AS INTEGER OPTIONAL
 	WSDATA SEND_SG1      AS INTEGER OPTIONAL
 
-	WSMETHOD TRANSPORTADORA DESCRIPTION TRANSP001
+	WSMETHOD PESQUISA_TRANSPORTADORA DESCRIPTION STR0499
 	WSDATA FIELDS_SA4    AS STRING OPTIONAL
 	WSDATA WHERE_SA4     AS STRING OPTIONAL
 
-	WSMETHOD CONDICAO_PAGTO DESCRIPTION CONDPAG001
+	WSMETHOD PESQUISA_CONDICAO_PAGTO DESCRIPTION STR0599
 	WSDATA FIELDS_SE4    AS STRING OPTIONAL
 	WSDATA WHERE_SE4     AS STRING OPTIONAL
 
+	//	WSMETHOD INCLUI_PEDIDO_VENDA DESCRIPTION STR0699
+	//	WSDATA C5_CLIENTE AS STRING 
+	//	WSDATA C5_LOJACLI AS STRING
+	//	WSDATA C5_CONDPAG AS STRING
+	//	WSDATA ITENS_VENDA AS ARRAY OF ITEM_VENDA
+	//
+	//	WSMETHOD INCLUI_PEDIDO_COMPRA   DESCRIPTION STR1099
+	//	WSDATA C7_FORNECE AS STRING
+	//	WSDATA C7_LOJA    AS STRING
+	//	WSDATA C7_COND    AS STRING OPTIONAL 
+	//
+	//	WSMETHOD EXCLUI_PEDIDO_VENDA   DESCRIPTION STR0799
+	WSMETHOD CONSULTA_PEDIDO_VENDA DESCRIPTION STR0899
+	//	WSMETHOD LIBERA_PEDIDO_VENDA   DESCRIPTION STR0999
+	//	WSMETHOD EXCLUI_PEDIDO_COMPRA   DESCRIPTION STR1199
+	//	WSMETHOD CONSULTA_PEDIDO_COMPRA DESCRIPTION STR1299
+	WSDATA ORDER_NUMBER AS STRING
+	WSDATA TYPE_REQUEST AS INTEGER OPTIONAL
+	//	WSDATA RELEASE_TYPE AS STRING OPTIONAL
+
 ENDWSSERVICE
+
+/*/{Protheus.doc} ITEM_VENDA
+Estrura de dados do item de venda
+@author Elton Teodoro Alves
+@since 26/06/2018
+@version 12.1.017
+/*/
+WSSTRUCT ITEM_VENDA
+
+	WSDATA C6_PRODUTO AS STRING
+	WSDATA C6_QTDVEN  AS FLOAT
+	WSDATA C6_PRCVEN  AS FLOAT  OPTIONAL
+	WSDATA C6_TES     AS STRING OPTIONAL
+
+ENDWSSTRUCT
+
+/*/{Protheus.doc} ITEM_COMPRA
+Estrura de dados do item de compra
+@author Elton Teodoro Alves
+@since 26/06/2018
+@version 12.1.017
+/*/
+WSSTRUCT ITEM_COMPRA
+
+	WSDATA C7_PRODUTO AS STRING
+	WSDATA C7_QUANT   AS FLOAT
+	WSDATA C7_PRECO   AS FLOAT OPTIONAL
+
+ENDWSSTRUCT
+
+/*/{Protheus.doc} RESULT
+Estrura de dados do resultado do método
+@author Elton Teodoro Alves
+@since 26/06/2018
+@version 12.1.017
+/*/
+WSSTRUCT RESULT
+
+	WSDATA RESULT       AS INTEGER 
+	WSDATA MESSAGE      AS STRING OPTIONAL
+	WSDATA ORDER_NUMBER AS STRING OPTIONAL
+	WSDATA ORDER_SCHEMA AS STRING OPTIONAL
+	WSDATA ORDER_DATA   AS STRING OPTIONAL		
+
+ENDWSSTRUCT
 
 /*/{Protheus.doc} CLIENTE
 Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisados.
@@ -65,7 +138,7 @@ Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisado
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
 @return Caracter, Xml com os dados do(s) cliente(s) ou Schema do Xml
 /*/
-WSMETHOD CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, WHERE_SA1, WHERE_DA1, SEND_DA0, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
+WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, WHERE_SA1, WHERE_DA1, SEND_DA0, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
 	Local oModel     := Nil 
 	Local oGridSA1   := Nil
@@ -227,7 +300,7 @@ Método do Web Service que retorna o XML com os dados do(s) produtos(s) pesquisad
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
 @return Caracter, Xml com os dados do(s) produto(s) ou Schema do Xml 
 /*/
-WSMETHOD PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, WHERE_SB1, WHERE_SB2, WHERE_SG1, SEND_SB2, SEND_SG1, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
+WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, WHERE_SB1, WHERE_SB2, WHERE_SG1, SEND_SB2, SEND_SG1, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
 	Local oModel     := Nil 
 	Local oGridSB1   := Nil
@@ -411,7 +484,7 @@ Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pe
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
 @return Caracter, Xml com os dados do(s) transportadora(s) ou Schema do Xml 
 /*/
-WSMETHOD TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA4, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
+WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA4, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
 	Local oModel     := Nil 
 	Local oGridSA4   := Nil
@@ -514,7 +587,7 @@ Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pe
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
 @return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml 
 /*/
-WSMETHOD CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE4, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
+WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE4, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
 	Local oModel     := Nil 
 	Local oGridSE4   := Nil
@@ -602,6 +675,103 @@ Static Function CondPagMod( FIELDS_SA4 )
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetDescription('Lista de Condições de Pagamento')
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetOptional(.T.)
 	oModel:SetRelation('SE4-CONDICAO_PAGTO', { { 'E4_FILIAL', 'M0_CODFIL' } }, SE4->(IndexKey(1)) )	
+
+Return oModel 
+
+/*/{Protheus.doc} CONSULTA_PEDIDO_VENDA
+Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
+@author Elton Teodoro Alves
+@since 11/06/2018
+@version 12.1.017
+@param EMPRESA, Caracter, Empresa da Pesquisa
+@param FILIAL, Caracter, Filial da Pesquisa
+@param ORDER_NUMBER, Caracter, Número do Pedido de Venda da Consulta
+@param TYPE_REQUEST, Numerico, Tipo de requisição da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
+@return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml 
+/*/
+WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQUEST WSSEND RESULT_METHOD WSSERVICE INDTA001
+
+	Local oModel     := Nil 
+	Local oSetEnv    := SetEnv():New()
+
+	Default EMPRESA       := ''
+	Default FILIAL        := ''
+	Default ORDER_NUMBER  := ''
+	Default TYPE_REQUEST := 1
+
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
+
+		::RESULT_METHOD:RESULT      := 4
+		::RESULT_METHOD:MESSAGE     := oSetEnv:ErrorMessage
+
+		Return .T.
+
+	End If
+
+	oModel := PedVendMod()
+
+	oModel:SetOperation( MODEL_OPERATION_VIEW )
+
+	DbSelectArea( 'SC5' )
+	DbSetOrder( 1 )
+	DbSeek( xFilial('SC5') + ORDER_NUMBER )
+
+	oModel:Activate()
+
+	If TYPE_REQUEST # 2
+
+		If ! Empty( ORDER_NUMBER ) .And. Found()
+
+			::RESULT_METHOD:RESULT      := 1
+			::RESULT_METHOD:MESSAGE     := 'Pedido de Venda Localizado.'
+			::RESULT_METHOD:ORDER_DATA  := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+
+		Else 
+
+			::RESULT_METHOD:RESULT      := 2
+			::RESULT_METHOD:MESSAGE     := 'Pedido de Venda não Localizado.'
+
+		End If  
+
+	Else
+
+		::RESULT_METHOD:RESULT      := 3
+		::RESULT_METHOD:MESSAGE     := 'Schema XSD do XML do Modelo de Dados do Pedido de Dados'
+		::RESULT:ORDER_SCHEMA := Encode64( oModel:GetXMLSchema() )
+
+	End If
+
+	oModel:DeActivate()
+
+	oSetEnv:Clear()
+
+Return .T.
+
+/*/{Protheus.doc} PedVendMod
+Função que monta o Model com os dados da pesquisa de Pedido de Venda
+@author Elton Teodoro Alves
+@since 11/06/2018
+@version 12.1.017
+@return Objeto, Objeto com o Modelo de Dados
+/*/
+Static Function PedVendMod()
+
+	Local oModel  := MPFormModel():New('PEDIDO_VENDA')
+	Local oStrSC5 := FWFormStruct(1,'SC5')
+	Local oStrSC6 := FWFormStruct(1,'SC6')
+
+	oStrSC5:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+	oStrSC6:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+
+	oModel:SetDescription('Pedido de Venda')
+
+	oModel:addFields('SC5-CABECALHO',,oStrSC5)
+	oModel:getModel('SC5-CABECALHO'):SetDescription('Cabecalho do Pedido de Venda')
+
+	oModel:addGrid('SC6-ITENS','SC5-CABECALHO',oStrSC6)
+	oModel:getModel('SC6-ITENS'):SetDescription('Itens do Pedido de Venda')
+	oModel:getModel('SC6-ITENS'):SetOptional(.T.)
+	oModel:SetRelation('SC6-ITENS', { { 'C6_FILIAL', 'C5_FILIAL' }, { 'C6_NUM', 'C5_NUM' } }, SC6->(IndexKey(1)) )	
 
 Return oModel
 
