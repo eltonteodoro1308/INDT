@@ -3,11 +3,11 @@
 #DEFINE STR0399 'MÉTODO DE PESQUISA DO CADASTRO DE PRODUTOS'
 #DEFINE STR0499 'MÉTODO DE PESQUISA DO CADASTRO DE TRANSPORTADORAS'
 #DEFINE STR0599 'MÉTODO DE PESQUISA DO CADASTRO DE CONDIÇÕES DE PGAMENTO'
-#DEFINE STR0699 ''
+#DEFINE STR0699 'INCLUSÃO PEDIDO DE VENDA'
 #DEFINE STR0799 ''
-#DEFINE STR0899 'MÉTODO DE PESQUISA DE PEDIDO DE VENDA'
+#DEFINE STR0899 'MÉTODO DE CONSULTA DE PEDIDO DE VENDA'
 #DEFINE STR0999 ''
-#DEFINE STR1099 '' 
+#DEFINE STR1099 ''
 #DEFINE STR1199 ''
 #DEFINE STR1299 ''
 
@@ -27,7 +27,7 @@ WSSERVICE INDTA001 DESCRIPTION STR0199
 	WSDATA FILIAL        AS STRING  OPTIONAL
 	WSDATA TYPE_RESPONSE AS INTEGER OPTIONAL
 	WSDATA RESPONSE      AS STRING
-	WSDATA RESULT_METHOD AS RESULT    
+	WSDATA RESULT_METHOD AS RESULT
 
 	WSMETHOD PESQUISA_CLIENTE DESCRIPTION STR0299
 	WSDATA FIELDS_SA1    AS STRING  OPTIONAL
@@ -55,17 +55,18 @@ WSSERVICE INDTA001 DESCRIPTION STR0199
 	WSDATA FIELDS_SE4    AS STRING OPTIONAL
 	WSDATA WHERE_SE4     AS STRING OPTIONAL
 
-	//	WSMETHOD INCLUI_PEDIDO_VENDA DESCRIPTION STR0699
-	//	WSDATA C5_CLIENTE AS STRING 
-	//	WSDATA C5_LOJACLI AS STRING
-	//	WSDATA C5_CONDPAG AS STRING
-	//	WSDATA ITENS_VENDA AS ARRAY OF ITEM_VENDA
-	//
+	WSMETHOD INCLUI_PEDIDO_VENDA DESCRIPTION STR0699
+	WSDATA C5_CLIENTE AS STRING
+	WSDATA C5_LOJACLI AS STRING
+	WSDATA C5_CONDPAG AS STRING OPTIONAL
+	WSDATA ITENS      AS ITENS_VENDA
+
 	//	WSMETHOD INCLUI_PEDIDO_COMPRA   DESCRIPTION STR1099
 	//	WSDATA C7_FORNECE AS STRING
 	//	WSDATA C7_LOJA    AS STRING
-	//	WSDATA C7_COND    AS STRING OPTIONAL 
-	//
+	//	WSDATA C7_COND    AS STRING OPTIONAL
+	//	WSDATA ITENS_COMPRA AS ARRAY OF ITEM_COMPRA
+
 	//	WSMETHOD EXCLUI_PEDIDO_VENDA   DESCRIPTION STR0799
 	WSMETHOD CONSULTA_PEDIDO_VENDA DESCRIPTION STR0899
 	//	WSMETHOD LIBERA_PEDIDO_VENDA   DESCRIPTION STR0999
@@ -83,12 +84,24 @@ Estrura de dados do item de venda
 @since 26/06/2018
 @version 12.1.017
 /*/
-WSSTRUCT ITEM_VENDA
+WSSTRUCT DADOS_ITEM_VENDA
 
 	WSDATA C6_PRODUTO AS STRING
 	WSDATA C6_QTDVEN  AS FLOAT
 	WSDATA C6_PRCVEN  AS FLOAT  OPTIONAL
 	WSDATA C6_TES     AS STRING OPTIONAL
+
+ENDWSSTRUCT
+
+/*/{Protheus.doc} ITEM_VENDA
+Estrura de dados do item de venda
+@author Elton Teodoro Alves
+@since 26/06/2018
+@version 12.1.017
+/*/
+WSSTRUCT ITENS_VENDA
+
+	WSDATA PRODUTOS AS ARRAY OF DADOS_ITEM_VENDA
 
 ENDWSSTRUCT
 
@@ -114,11 +127,11 @@ Estrura de dados do resultado do método
 /*/
 WSSTRUCT RESULT
 
-	WSDATA RESULT       AS INTEGER 
+	WSDATA RESULT       AS INTEGER
 	WSDATA MESSAGE      AS STRING OPTIONAL
 	WSDATA ORDER_NUMBER AS STRING OPTIONAL
 	WSDATA ORDER_SCHEMA AS STRING OPTIONAL
-	WSDATA ORDER_DATA   AS STRING OPTIONAL		
+	WSDATA ORDER_DATA   AS STRING OPTIONAL
 
 ENDWSSTRUCT
 
@@ -129,7 +142,7 @@ Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisado
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
-@param FIELDS_SA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Clientes 
+@param FIELDS_SA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Clientes
 @param FIELDS_DA0, Caracter, Campos a serem retornados na pesquisa da tabela DA0-Tabela de Preço
 @param FIELDS_DA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Itens da Tabela de Preço
 @param WHERE_SA1, Caracter, Filtro em formato SQL a ser aplicado na pesquisa da tabela SA1-Clientes
@@ -140,9 +153,9 @@ Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisado
 /*/
 WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, WHERE_SA1, WHERE_DA1, SEND_DA0, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
-	Local oModel     := Nil 
+	Local oModel     := Nil
 	Local oGridSA1   := Nil
-	Local oGridDA1   := Nil 
+	Local oGridDA1   := Nil
 	Local oSetEnv    := SetEnv():New()
 
 	Default EMPRESA       := ''
@@ -172,23 +185,6 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 
 	End If
 
-
-	If ! Empty( WHERE_SA1 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "SA1" ) + " WHERE " + WHERE_SA1 ) < 0 
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
-	If SEND_DA0 # 2 .And. ! Empty( WHERE_DA1 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "DA1" ) + " WHERE " + WHERE_DA1 ) < 0
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
 	oGridSA1:SetLoadFilter( ,DecodeUtf8(WHERE_SA1) )
 
 	If SEND_DA0 # 2
@@ -207,7 +203,7 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 
 	If TYPE_RESPONSE # 2
 
-		::RESPONSE := oModel:GetXMLData(,,,,.F.,.T.,.F.)
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	Else
 
@@ -226,7 +222,7 @@ Função que monta o Model com os dados da pesquisa de clientes
 @author Elton Teodoro Alves
 @since 11/06/2018
 @version 12.1.017
-@param FIELDS_SA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Clientes 
+@param FIELDS_SA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Clientes
 @param FIELDS_DA0, Caracter, Campos a serem retornados na pesquisa da tabela DA0-Tabela de Preço
 @param FIELDS_DA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Itens da Tabela de Preço
 @param SEND_DA0, Numerico, Indica se envia no XML a tabela de Preço do Cliente 1=Sim/2=Não
@@ -246,13 +242,19 @@ Static Function ClienteMod( FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, SEND_DA0 )
 
 	oStrSA1 := FWFormStruct(1,'SA1',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SA1 ) .Or. AllTrim(cCpo) $ FIELDS_SA1 + ',A1_TABELA' })
 
+	oStrSA1:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+
 	SX2->( DbSeek( 'DA0' ) )
 
 	oStrDA0 := FWFormStruct(1,'DA0',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_DA0 ) .Or. AllTrim(cCpo) $ FIELDS_DA0 })
 
+	oStrDA0:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+
 	SX2->( DbSeek( 'DA1' ) )
 
 	oStrDA1 := FWFormStruct(1,'DA1',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_DA1 ) .Or. AllTrim(cCpo) $ FIELDS_DA1 })
+
+	oStrDA1:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
 
 	SX2->( RestArea( aAreaSX2 ) )
 
@@ -278,7 +280,7 @@ Static Function ClienteMod( FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, SEND_DA0 )
 		oModel:getModel('DA1-ITENS_LISTA_DE_PRECOS'):SetOptional(.T.)
 		oModel:SetRelation('DA1-ITENS_LISTA_DE_PRECOS', { { 'DA1_FILIAL', 'xFilial("DA1")' }, { 'DA1_CODTAB', 'DA0_CODTAB' } }, DA1->(IndexKey(1)) )
 
-	End If	
+	End If
 
 Return oModel
 
@@ -292,17 +294,17 @@ Método do Web Service que retorna o XML com os dados do(s) produtos(s) pesquisad
 @param FIELDS_SB1, Caracter, Campos a serem retornados da Tabela SB1 – Descrição Genérica do Produto
 @param FIELDS_SB2, Caracter, Campos a serem retornados da Tabela SB2 – Saldo Físico e Financeiro
 @param FIELDS_SG1, Caracter, Campos a serem retornados do cadastro da Tabela SG1 – Estrutura dos Produtos
-@param WHERE_SB1, Caracter, Filtro em format SQL aplicado a Grid da Tabela SB1 – Cadastro de Produtos 
+@param WHERE_SB1, Caracter, Filtro em format SQL aplicado a Grid da Tabela SB1 – Cadastro de Produtos
 @param WHERE_SB2, Caracter, Filtro em format SQL aplicado a Grid da Tabela SB2 – Saldo Físico e Financeiro
 @param WHERE_SG1, Caracter, Filtro em format SQL aplicado a Grid da Tabela SG1 – Estrutura dos Produtos
 @param SEND_SB2, Numerico, Indica se Retorna na Pesquisa a Tabela SB2 – Saldo Físico e Financeiro: 1=Sim 2=Não
 @param SEND_SG1, Numerico,  Indica se Retorna na Pesquisa a Tabela SG1 – Estrutura dos Produtos: 1=Sim 2=Não
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
-@return Caracter, Xml com os dados do(s) produto(s) ou Schema do Xml 
+@return Caracter, Xml com os dados do(s) produto(s) ou Schema do Xml
 /*/
 WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, WHERE_SB1, WHERE_SB2, WHERE_SG1, SEND_SB2, SEND_SG1, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
-	Local oModel     := Nil 
+	Local oModel     := Nil
 	Local oGridSB1   := Nil
 	Local oGridSB2   := Nil
 	Local oGridSG1   := Nil
@@ -343,31 +345,6 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 
 	End If
 
-	If ! Empty( WHERE_SB1 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "SB1" ) + " WHERE " + WHERE_SB1 ) < 0 
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
-	If SEND_SB2 # 2 .And. ! Empty( WHERE_SB2 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "DA1" ) + " WHERE " + WHERE_SB2 ) < 0
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
-
-	If SEND_SG1 # 2 .And. ! Empty( WHERE_SG1 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "DA1" ) + " WHERE " + WHERE_SG1 ) < 0
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
 	oGridSB1:SetLoadFilter( ,DecodeUtf8(WHERE_SB1) )
 
 	If SEND_SB2 # 2
@@ -392,7 +369,7 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 
 	If TYPE_RESPONSE # 2
 
-		::RESPONSE := oModel:GetXMLData(,,,,.F.,.T.,.F.)
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	Else
 
@@ -432,13 +409,19 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 
 	oStrSB1 := FWFormStruct(1,'SB1',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SB1 ) .Or. AllTrim(cCpo) $ FIELDS_SB1 })
 
+	oStrSB1:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+
 	SX2->( DbSeek( 'DA0' ) )
 
 	oStrSB2 := FWFormStruct(1,'SB2',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SB2 ) .Or. AllTrim(cCpo) $ FIELDS_SB2 })
 
+	oStrSB2:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+
 	SX2->( DbSeek( 'DA1' ) )
 
 	oStrSG1 := FWFormStruct(1,'SG1',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SG1 ) .Or. AllTrim(cCpo) $ FIELDS_SG1 })
+
+	oStrSG1:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
 
 	SX2->( RestArea( aAreaSX2 ) )
 
@@ -468,7 +451,7 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 		oModel:getModel('SG1-ESTRUTURA'):SetOptional(.T.)
 		oModel:SetRelation('SG1-ESTRUTURA', { { 'G1_FILIAL', 'xFilial("SG1")' }, { 'G1_COD', 'B1_COD' } }, SG1->(IndexKey(1)) )
 
-	End If	
+	End If
 
 Return oModel
 
@@ -482,11 +465,11 @@ Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pe
 @param FIELDS_SA4, Caracter, Campos a serem retornados da Tabela SA4 – Transportadoras
 @param WHERE_SA4, Caracter, Filtro em format SQL aplicado a Grid da Tabela SA4 – Transportadoras
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
-@return Caracter, Xml com os dados do(s) transportadora(s) ou Schema do Xml 
+@return Caracter, Xml com os dados do(s) transportadora(s) ou Schema do Xml
 /*/
 WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA4, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
-	Local oModel     := Nil 
+	Local oModel     := Nil
 	Local oGridSA4   := Nil
 	Local oSetEnv    := SetEnv():New()
 
@@ -507,14 +490,6 @@ WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA
 	oModel   := TranspMod( FIELDS_SA4 )
 	oGridSA4 := oModel:GetModel('SA4-TRANSPORTADORAS' )
 
-	If ! Empty( WHERE_SA4 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "SB1" ) + " WHERE " + WHERE_SA4 ) < 0 
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
 	oGridSA4:SetLoadFilter( ,DecodeUtf8(WHERE_SA4) )
 
 	oModel:SetOperation( MODEL_OPERATION_VIEW )
@@ -527,7 +502,7 @@ WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA
 
 	If TYPE_RESPONSE # 2
 
-		::RESPONSE := oModel:GetXMLData(,,,,.F.,.T.,.F.)
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	Else
 
@@ -561,6 +536,8 @@ Static Function TranspMod( FIELDS_SA4 )
 
 	oStrSA4 := FWFormStruct(1,'SA4',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SA4 ) .Or. AllTrim(cCpo) $ FIELDS_SA4 })
 
+	oStrSA4:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+
 	SX2->( RestArea( aAreaSX2 ) )
 
 	oModel:SetDescription('Modelo de Dados Filial x Transportadora')
@@ -571,7 +548,7 @@ Static Function TranspMod( FIELDS_SA4 )
 	oModel:addGrid('SA4-TRANSPORTADORAS','SM0-FILIAL',oStrSA4)
 	oModel:getModel('SA4-TRANSPORTADORAS'):SetDescription('Lista de Transportadoras ')
 	oModel:getModel('SA4-TRANSPORTADORAS'):SetOptional(.T.)
-	oModel:SetRelation('SA4-TRANSPORTADORAS', { { 'A4_FILIAL', 'M0_CODFIL' } }, SA4->(IndexKey(1)) )	
+	oModel:SetRelation('SA4-TRANSPORTADORAS', { { 'A4_FILIAL', 'M0_CODFIL' } }, SA4->(IndexKey(1)) )
 
 Return oModel
 
@@ -585,11 +562,11 @@ Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pe
 @param FIELDS_SE4, Caracter, Campos a serem retornados da Tabela SE4 – Condições de Pagamento
 @param WHERE_SE4, Caracter, Filtro em format SQL aplicado a Grid da Tabela SE4 – Condições de Pagamento
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
-@return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml 
+@return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml
 /*/
 WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE4, TYPE_RESPONSE WSSEND RESPONSE WSSERVICE INDTA001
 
-	Local oModel     := Nil 
+	Local oModel     := Nil
 	Local oGridSE4   := Nil
 	Local oSetEnv    := SetEnv():New()
 
@@ -610,14 +587,6 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 	oModel   := CondPagMod( FIELDS_SE4 )
 	oGridSE4 := oModel:GetModel('SE4-CONDICAO_PAGTO' )
 
-	If ! Empty( WHERE_SE4 ) .AND. TcSqlExec( "SELECT * FROM " + RetSqlName( "SB1" ) + " WHERE " + WHERE_SE4 ) < 0 
-
-		::RESPONSE := TcSqlError()
-
-		Return .T.
-
-	End If
-
 	oGridSE4:SetLoadFilter( ,DecodeUtf8(WHERE_SE4) )
 
 	oModel:SetOperation( MODEL_OPERATION_VIEW )
@@ -630,7 +599,7 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 
 	If TYPE_RESPONSE # 2
 
-		::RESPONSE := oModel:GetXMLData(,,,,.F.,.T.,.F.)
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	Else
 
@@ -649,20 +618,22 @@ Função que monta o Model com os dados da pesquisa de transportadoras
 @author Elton Teodoro Alves
 @since 11/06/2018
 @version 12.1.017
-@param FIELDS_SA4, Caracter, Campos a serem retornados da Tabela SA4 – Transportadoras
+@param FIELDS_SE4, Caracter, Campos a serem retornados da Tabela SE4 – Transportadora
 @return Objeto, Objeto com o Modelo de Dados
 /*/
-Static Function CondPagMod( FIELDS_SA4 )
+Static Function CondPagMod( FIELDS_SE4 )
 
 	Local cAlias  := 'SE4'
 	Local oModel  := MPFormModel():New('CONDICAO_PAGTO')
 	Local oStrSM0 := GetSM0Str( cAlias )
-	Local oStrSA4 := Nil
+	Local oStrSE4 := Nil
 	Local aAreaSX2:= SX2->( GetArea() )
 
 	SX2->( DbSeek( 'SE4' ) )
 
-	oStrSA4 := FWFormStruct(1,'SE4',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SE4 ) .Or. AllTrim(cCpo) $ FIELDS_SE4 })
+	oStrSE4 := FWFormStruct(1,'SE4',{|cCpo| AllTrim(cCpo) $ SX2->X2_UNICO .Or. Empty( FIELDS_SE4 ) .Or. AllTrim(cCpo) $ FIELDS_SE4 })
+
+	oStrSE4:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
 
 	SX2->( RestArea( aAreaSX2 ) )
 
@@ -674,9 +645,9 @@ Static Function CondPagMod( FIELDS_SA4 )
 	oModel:addGrid('SE4-CONDICAO_PAGTO','SM0-FILIAL',oStrSA4)
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetDescription('Lista de Condições de Pagamento')
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetOptional(.T.)
-	oModel:SetRelation('SE4-CONDICAO_PAGTO', { { 'E4_FILIAL', 'M0_CODFIL' } }, SE4->(IndexKey(1)) )	
+	oModel:SetRelation('SE4-CONDICAO_PAGTO', { { 'E4_FILIAL', 'M0_CODFIL' } }, SE4->(IndexKey(1)) )
 
-Return oModel 
+Return oModel
 
 /*/{Protheus.doc} CONSULTA_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
@@ -687,11 +658,11 @@ Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pe
 @param FILIAL, Caracter, Filial da Pesquisa
 @param ORDER_NUMBER, Caracter, Número do Pedido de Venda da Consulta
 @param TYPE_REQUEST, Numerico, Tipo de requisição da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
-@return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml 
+@return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml
 /*/
 WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQUEST WSSEND RESULT_METHOD WSSERVICE INDTA001
 
-	Local oModel     := Nil 
+	Local oModel     := Nil
 	Local oSetEnv    := SetEnv():New()
 
 	Default EMPRESA       := ''
@@ -701,7 +672,7 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
-		::RESULT_METHOD:RESULT      := 4
+		::RESULT_METHOD:RESULT      := 0
 		::RESULT_METHOD:MESSAGE     := oSetEnv:ErrorMessage
 
 		Return .T.
@@ -722,22 +693,22 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 		If ! Empty( ORDER_NUMBER ) .And. Found()
 
-			::RESULT_METHOD:RESULT      := 1
-			::RESULT_METHOD:MESSAGE     := 'Pedido de Venda Localizado.'
-			::RESULT_METHOD:ORDER_DATA  := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+			::RESULT_METHOD:RESULT     := 1
+			::RESULT_METHOD:MESSAGE    := 'Pedido de Venda Localizado.'
+			::RESULT_METHOD:ORDER_DATA := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
-		Else 
+		Else
 
-			::RESULT_METHOD:RESULT      := 2
-			::RESULT_METHOD:MESSAGE     := 'Pedido de Venda não Localizado.'
+			::RESULT_METHOD:RESULT  := 2
+			::RESULT_METHOD:MESSAGE := 'Pedido de Venda não Localizado.'
 
-		End If  
+		End If
 
 	Else
 
-		::RESULT_METHOD:RESULT      := 3
-		::RESULT_METHOD:MESSAGE     := 'Schema XSD do XML do Modelo de Dados do Pedido de Dados'
-		::RESULT:ORDER_SCHEMA := Encode64( oModel:GetXMLSchema() )
+		::RESULT_METHOD:RESULT  := 3
+		::RESULT_METHOD:MESSAGE := 'Schema XSD do XML do Modelo de Dados do Pedido de Vendas'
+		::RESULT:ORDER_SCHEMA   := Encode64( oModel:GetXMLSchema() )
 
 	End If
 
@@ -771,16 +742,173 @@ Static Function PedVendMod()
 	oModel:addGrid('SC6-ITENS','SC5-CABECALHO',oStrSC6)
 	oModel:getModel('SC6-ITENS'):SetDescription('Itens do Pedido de Venda')
 	oModel:getModel('SC6-ITENS'):SetOptional(.T.)
-	oModel:SetRelation('SC6-ITENS', { { 'C6_FILIAL', 'C5_FILIAL' }, { 'C6_NUM', 'C5_NUM' } }, SC6->(IndexKey(1)) )	
+	oModel:SetRelation('SC6-ITENS', { { 'C6_FILIAL', 'C5_FILIAL' }, { 'C6_NUM', 'C5_NUM' } }, SC6->(IndexKey(1)) )
 
 Return oModel
+
+/*/{Protheus.doc} CONSULTA_PEDIDO_VENDA
+Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
+@author Elton Teodoro Alves
+@since 11/06/2018
+@version 12.1.017
+@param EMPRESA, Caracter, Empresa da Pesquisa
+@param FILIAL, Caracter, Filial da Pesquisa
+@param ORDER_NUMBER, Caracter, Número do Pedido de Venda da Consulta
+@param TYPE_REQUEST, Numerico, Tipo de requisição da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
+@return Caracter, Xml com os dados do(s) condições de pagamento(s) ou Schema do Xml
+/*/
+WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, C5_CONDPAG, ITENS WSSEND RESULT_METHOD WSSERVICE INDTA001
+
+	Local aCabec  := {}
+	Local aItens  := {}
+	Local aItem   := {}
+	Local nX      := 0
+	Local oSetEnv := SetEnv():New()
+
+	Default EMPRESA       := ''
+	Default FILIAL        := ''
+
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
+
+		::RESULT_METHOD:RESULT      := 0
+		::RESULT_METHOD:MESSAGE     := oSetEnv:ErrorMessage
+
+		Return .T.
+
+	End If
+
+	// Valida Código e Loja do Cliente
+	DbSelectArea( 'SA1' )
+	DbSetOrder( 1 )
+	DbSeek( xFilial('SA1') + PadR( C5_CLIENTE, GetSx3Cache( 'C5_CLIENTE', 'X3_TAMANHO' ) ) + PadR( C5_LOJACLI, GetSx3Cache( 'C5_LOJACLI', 'X3_TAMANHO' ) ) )
+
+	If ! Found()
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE := 'Código/Loja do cliente não localizado'
+
+		Return .T.
+
+	End If
+
+	//Valida condição de pagamento
+	If Empty( C5_CONDPAG ) .And. Empty( SA1->A1_COND )
+
+		::RESULT_METHOD:RESULT  := 4
+		::RESULT_METHOD:MESSAGE := 'Condição de Pagamento não existente no cadastro do cliente'
+
+		Return .T.
+
+	Else
+
+		DbSelectArea( 'SE4' )
+		DbSetOrder( 1 )
+		DbSeek( xFilial('SE4') + C5_CONDPAG )
+
+		If ! Found()
+
+			::RESULT_METHOD:RESULT  := 3
+			::RESULT_METHOD:MESSAGE := 'Condição de Pagamento informada não localizada'
+
+			Return .T.
+
+		End If
+
+	End If
+
+	aAdd( aCabec, { 'C5_CLIENTE', ::C5_CLIENTE, Nil } )
+	aAdd( aCabec, { 'C5_LOJACLI', ::C5_LOJACLI, Nil } )
+	aAdd( aCabec, { 'C5_CONDPAG', ::C5_CONDPAG, Nil } )
+
+	For nX := 1 To Len( ::ITENS:PRODUTOS )
+
+		//Valida Código do Produto preenchido
+		If Empty( ::ITENS:PRODUTOS[nX]:C6_PRODUTO )
+
+			::RESULT_METHOD:RESULT  := 6
+			::RESULT_METHOD:MESSAGE := 'Código do Produto não Informado, item ' + cValtoChar( nX )
+
+			Return .T.
+
+		End If
+
+		//Valida código do produto existente
+		DbSelectArea( 'SB1' )
+		DbSetOrder( 1 )
+		DbSeek( xFilial('SB1') + ::ITENS:PRODUTOS[nX]:C6_PRODUTO )
+
+		If ! Found()
+
+			::RESULT_METHOD:RESULT  := 2
+			::RESULT_METHOD:MESSAGE := 'Código do Produto não localizado ' + ::ITENS:PRODUTOS[nX]:C6_PRODUTO
+
+			Return .T.
+
+		End If
+
+		//Valida Quantidade
+		If ::ITENS:PRODUTOS[nX]:C6_QTDVEN <= 0
+
+			::RESULT_METHOD:RESULT  := 7
+			::RESULT_METHOD:MESSAGE := 'Quantidade do produto menor ou igual a que zero ' + ::ITENS:PRODUTOS[nX]:C6_PRODUTO
+
+			Return .T.
+
+		End If
+
+		//Valida Preço de Venda negativo
+		If ::ITENS:PRODUTOS[nX]:C6_PRCVEN < 0
+
+			::RESULT_METHOD:RESULT  := 8
+			::RESULT_METHOD:MESSAGE := 'Preço do produto menor que zero ' + ::ITENS:PRODUTOS[nX]:C6_PRODUTO
+
+			Return .T.
+
+		End If
+
+		//Valida Preço de Venda se não foi enviado no cadastro do produto e na tabela de preço
+		If ::ITENS:PRODUTOS[nX]:C6_PRCVEN == 0
+
+			If ! Empty( SA1->A1_TABELA )
+
+			//TODO Buscar na tabela de preço se há preço para o produto.
+
+			Else
+
+				If SB1->B1_PRV1 == 0
+
+					::RESULT_METHOD:RESULT  := 9
+					::RESULT_METHOD:MESSAGE := 'Preço do produto não localizado em seu cadastro ou em tabela de preço vinculada ao cliente ' + ::ITENS:PRODUTOS[nX]:C6_PRODUTO
+
+				End If
+
+			End If
+
+		End If
+
+		aAdd( aItem, { 'C6_PRODUTO', ::ITENS:PRODUTOS[nX]:C6_PRODUTO, Nil } )
+		aAdd( aItem, { 'C6_QTDVEN' , ::ITENS:PRODUTOS[nX]:C6_QTDVEN , Nil } )
+		aAdd( aItem, { 'C6_PRCVEN' , ::ITENS:PRODUTOS[nX]:C6_PRCVEN , Nil } )
+		aAdd( aItem, { 'C6_TES'    , ::ITENS:PRODUTOS[nX]:C6_TES    , Nil } )
+
+		aAdd( aItens, aItem )
+		aSize( aItem, 0 )
+
+	Next nX
+
+	::RESULT_METHOD:RESULT  := 0
+	::RESULT_METHOD:MESSAGE := ''
+
+	oSetEnv:Clear()
+
+Return .T.
 
 /*/{Protheus.doc} GetSM0Str
 Função que monta a estrutura de campos do model da tabela SM0
 @author Elton Teodoro Alves
 @since 11/06/2018
 @version 12.1.017
-@param cAlias, Nome do Alias correspondente 
+@param cAlias, Nome do Alias correspondente
 @return Objeto, Objeto com a estrutura o Modelo de Dados
 /*/
 Static Function GetSM0Str( cAlias )
@@ -798,7 +926,7 @@ Função que faz o load do modelo de dados da Filial
 @author Elton Teodoro Alves
 @since 11/06/2018
 @version 12.1.017
-@Param oFieldModel, Objeto, Objeto do Modelo de dados  
+@Param oFieldModel, Objeto, Objeto do Modelo de dados
 @Param lCopy, Booleano, Indica se é uma cópia
 @Param cAlias, Caracter, Nome da tabela da pesquisa
 @return Array, Array com os dados do Load do Model
@@ -808,7 +936,7 @@ Static Function LoadSM0(oFieldModel, lCopy, cAlias)
 	Local aLoad := {}
 
 	aAdd(aLoad, {FwxFilial(cAlias)})
-	aAdd(aLoad, 1) 
+	aAdd(aLoad, 1)
 
 Return aLoad
 
