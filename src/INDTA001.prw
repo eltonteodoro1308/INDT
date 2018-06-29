@@ -179,7 +179,7 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 	oModel   := ClienteMod( FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, SEND_DA0 )
 	oGridSA1 := oModel:GetModel('SA1-CLIENTES' )
 
-	If SEND_DA0 # 2
+	If SEND_DA0 == 1
 
 		oGridDA1 := oModel:GetModel('DA1-ITENS_LISTA_DE_PRECOS' )
 
@@ -187,7 +187,7 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 
 	oGridSA1:SetLoadFilter( ,DecodeUtf8(WHERE_SA1) )
 
-	If SEND_DA0 # 2
+	If SEND_DA0 == 1
 
 		oGridDA1:SetLoadFilter( ,DecodeUtf8(WHERE_DA1) )
 
@@ -201,7 +201,7 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 2
+	If TYPE_RESPONSE == 1
 
 		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
@@ -268,7 +268,7 @@ Static Function ClienteMod( FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, SEND_DA0 )
 	oModel:getModel('SA1-CLIENTES'):SetOptional(.T.)
 	oModel:SetRelation('SA1-CLIENTES', { { 'A1_FILIAL', 'M0_CODFIL' } }, SA1->(IndexKey(1)) )
 
-	If SEND_DA0 # 2
+	If SEND_DA0 == 1
 
 		oModel:Addfields('DA0-LISTA_DE_PRECOS','SA1-CLIENTES',oStrDA0)
 		oModel:getModel('DA0-LISTA_DE_PRECOS'):SetDescription('Cabeçalho Lista de Preços')
@@ -333,13 +333,13 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 	oModel   := ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_SG1 )
 	oGridSB1 := oModel:GetModel('SB1-PRODUTOS' )
 
-	If SEND_SB2 # 2
+	If SEND_SB2 == 1
 
 		oGridSB2 := oModel:GetModel('SB2-SALDOS' )
 
 	End If
 
-	If SEND_SG1 # 2
+	If SEND_SG1 == 1
 
 		oGridSG1 := oModel:GetModel('SG1-ESTRUTURA' )
 
@@ -347,13 +347,13 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 
 	oGridSB1:SetLoadFilter( ,DecodeUtf8(WHERE_SB1) )
 
-	If SEND_SB2 # 2
+	If SEND_SB2 == 1
 
 		oGridSB2:SetLoadFilter( ,DecodeUtf8(WHERE_SB2) )
 
 	End If
 
-	If SEND_SG1 # 2
+	If SEND_SG1 == 1
 
 		oGridSG1:SetLoadFilter( ,DecodeUtf8(WHERE_SG1) )
 
@@ -367,7 +367,7 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 2
+	If TYPE_RESPONSE == 1
 
 		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
@@ -435,7 +435,7 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 	oModel:getModel('SB1-PRODUTOS'):SetOptional(.T.)
 	oModel:SetRelation('SB1-PRODUTOS', { { 'B1_FILIAL', 'M0_CODFIL' } }, SB1->(IndexKey(1)) )
 
-	If SEND_SB2 # 2
+	If SEND_SB2 == 1
 
 		oModel:addGrid('SB2-SALDOS','SB1-PRODUTOS',oStrSB2)
 		oModel:getModel('SB2-SALDOS'):SetDescription('Lista de Saldos')
@@ -444,7 +444,7 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 
 	End If
 
-	If SEND_SG1 # 2
+	If SEND_SG1 == 1
 
 		oModel:addGrid('SG1-ESTRUTURA','SB1-PRODUTOS',oStrSG1)
 		oModel:getModel('SG1-ESTRUTURA'):SetDescription('Estrutura do Produto')
@@ -500,7 +500,7 @@ WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 2
+	If TYPE_RESPONSE == 1
 
 		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
@@ -597,7 +597,7 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 2
+	If TYPE_RESPONSE == 1
 
 		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
@@ -618,7 +618,7 @@ Função que monta o Model com os dados da pesquisa de transportadoras
 @author Elton Teodoro Alves
 @since 11/06/2018
 @version 12.1.017
-@param FIELDS_SE4, Caracter, Campos a serem retornados da Tabela SE4 – Transportadora
+@param FIELDS_SE4, Caracter, Campos a serem retornados da Tabela SE4 – Cond Pagamento
 @return Objeto, Objeto com o Modelo de Dados
 /*/
 Static Function CondPagMod( FIELDS_SE4 )
@@ -642,7 +642,7 @@ Static Function CondPagMod( FIELDS_SE4 )
 	oModel:addFields('SM0-FILIAL',,oStrSM0,,,{|oFieldModel, lCopy|LoadSM0(oFieldModel, lCopy, cAlias)})
 	oModel:getModel('SM0-FILIAL'):SetDescription('Filial Corrente')
 
-	oModel:addGrid('SE4-CONDICAO_PAGTO','SM0-FILIAL',oStrSA4)
+	oModel:addGrid('SE4-CONDICAO_PAGTO','SM0-FILIAL',oStrSE4)
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetDescription('Lista de Condições de Pagamento')
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetOptional(.T.)
 	oModel:SetRelation('SE4-CONDICAO_PAGTO', { { 'E4_FILIAL', 'M0_CODFIL' } }, SE4->(IndexKey(1)) )
@@ -689,7 +689,7 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 	oModel:Activate()
 
-	If TYPE_REQUEST # 2
+	If TYPE_REQUEST == 1
 
 		If ! Empty( ORDER_NUMBER ) .And. Found()
 
@@ -730,9 +730,11 @@ Static Function PedVendMod()
 	Local oModel  := MPFormModel():New('PEDIDO_VENDA')
 	Local oStrSC5 := FWFormStruct(1,'SC5')
 	Local oStrSC6 := FWFormStruct(1,'SC6')
+	Local oStrSC9 := FWFormStruct(1,'SC9')
 
 	oStrSC5:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
 	oStrSC6:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+	oStrSC9:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
 
 	oModel:SetDescription('Pedido de Venda')
 
@@ -743,6 +745,11 @@ Static Function PedVendMod()
 	oModel:getModel('SC6-ITENS'):SetDescription('Itens do Pedido de Venda')
 	oModel:getModel('SC6-ITENS'):SetOptional(.T.)
 	oModel:SetRelation('SC6-ITENS', { { 'C6_FILIAL', 'C5_FILIAL' }, { 'C6_NUM', 'C5_NUM' } }, SC6->(IndexKey(1)) )
+
+	oModel:addGrid('SC9-LIBERACOES','SC6-ITENS',oStrSC9)
+	oModel:getModel('SC9-LIBERACOES'):SetDescription('Liberações dos Itens do Pedido de Venda')
+	oModel:getModel('SC9-LIBERACOES'):SetOptional(.T.)
+	oModel:SetRelation('SC9-LIBERACOES', { { 'C9_FILIAL', 'C6_FILIAL' }, { 'C9_PEDIDO', 'C6_NUM' }, { 'C9_ITEM', 'C6_ITEM' } }, SC9->(IndexKey(1)) )
 
 Return oModel
 
@@ -871,7 +878,18 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 			If ! Empty( SA1->A1_TABELA )
 
-			//TODO Buscar na tabela de preço se há preço para o produto.
+				DbSelectArea( 'DA1' )
+				DbSetOrder( 1 ) //DA1_FILIAL+DA1_CODTAB+DA1_CODPRO
+				DbSeek( xFilial( 'DA1' ) + SA1->A1_TABELA + ::ITENS:PRODUTOS[nX]:C6_PRODUTO )
+
+				If ! Found()
+
+					::RESULT_METHOD:RESULT  := 9
+					::RESULT_METHOD:MESSAGE := 'Preço do produto não localizado em seu cadastro ou em tabela de preço vinculada ao cliente ' + ::ITENS:PRODUTOS[nX]:C6_PRODUTO
+
+					Return .T.
+
+				End If
 
 			Else
 
@@ -880,7 +898,45 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 					::RESULT_METHOD:RESULT  := 9
 					::RESULT_METHOD:MESSAGE := 'Preço do produto não localizado em seu cadastro ou em tabela de preço vinculada ao cliente ' + ::ITENS:PRODUTOS[nX]:C6_PRODUTO
 
+					Return .T.
+
 				End If
+
+			End If
+
+		End If
+
+		//Valida a Tes recebida ou existente no cadastro do Produtos
+		If ! Empty( ::ITENS:PRODUTOS[nX]:C6_TES )
+
+			If ! ( ::ITENS:PRODUTOS[nX]:C6_TES != '500' .And. SubStr( ::ITENS:PRODUTOS[nX]:C6_TES, 1, 1 ) $ '56789' )
+
+				::RESULT_METHOD:RESULT  := 12
+				::RESULT_METHOD:MESSAGE := 'o Código do Tipo de Saída deve estar entre 5XX e 9XX (exceto o 500) ' + ::ITENS:PRODUTOS[nX]:C6_TES
+
+			End If
+
+			DbSelectAre( 'SF4' )
+			DbSetOrder( 1 )
+			DbSeek( xFilial( 'SF4' ) + ::ITENS:PRODUTOS[nX]:C6_TES )
+
+			If ! Found(  )
+
+				::RESULT_METHOD:RESULT  := 10
+				::RESULT_METHOD:MESSAGE := 'Tipo de Saída não localizada ' + ::ITENS:PRODUTOS[nX]:C6_TES
+
+				Return .T.
+
+			End If
+
+		Else
+
+			If Empty( SB1->B1_TS )
+
+				::RESULT_METHOD:RESULT  := 11
+				::RESULT_METHOD:MESSAGE := 'Tipo de Saída não localizada ' + ::ITENS:PRODUTOS[nX]:C6_TES
+
+				Return .T.
 
 			End If
 
