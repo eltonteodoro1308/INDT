@@ -798,34 +798,35 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 	End If
 
+	aAdd( aCabec, { 'C5_CLIENTE', ::C5_CLIENTE, Nil } )
+	aAdd( aCabec, { 'C5_LOJACLI', ::C5_LOJACLI, Nil } )
+
 	//Valida condição de pagamento
-	If Empty( C5_CONDPAG ) .And. Empty( SA1->A1_COND )
+	If Empty( ::C5_CONDPAG ) .And. Empty( SA1->A1_COND )
 
 		::RESULT_METHOD:RESULT  := 4
 		::RESULT_METHOD:MESSAGE := 'Condição de Pagamento não existente no cadastro do cliente'
 
 		Return .T.
 
-	Else
+	ElseIf ! Empty( ::C5_CONDPAG )
 
 		DbSelectArea( 'SE4' )
 		DbSetOrder( 1 )
-		DbSeek( xFilial('SE4') + C5_CONDPAG )
+		DbSeek( xFilial('SE4') + ::C5_CONDPAG )
 
 		If ! Found()
 
 			::RESULT_METHOD:RESULT  := 3
-			::RESULT_METHOD:MESSAGE := 'Condição de Pagamento informada não localizada'
+			::RESULT_METHOD:MESSAGE := 'Condição de Pagamento informada não localizada ' + ::C5_CONDPAG
 
 			Return .T.
 
 		End If
 
-	End If
+		aAdd( aCabec, { 'C5_CONDPAG', ::C5_CONDPAG, Nil } )
 
-	aAdd( aCabec, { 'C5_CLIENTE', ::C5_CLIENTE, Nil } )
-	aAdd( aCabec, { 'C5_LOJACLI', ::C5_LOJACLI, Nil } )
-	aAdd( aCabec, { 'C5_CONDPAG', ::C5_CONDPAG, Nil } )
+	End If
 
 	For nX := 1 To Len( ::ITENS:PRODUTOS )
 
@@ -853,6 +854,8 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 		End If
 
+		aAdd( aItem, { 'C6_PRODUTO', ::ITENS:PRODUTOS[nX]:C6_PRODUTO, Nil } )
+
 		//Valida Quantidade
 		If ::ITENS:PRODUTOS[nX]:C6_QTDVEN <= 0
 
@@ -862,6 +865,8 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			Return .T.
 
 		End If
+
+		aAdd( aItem, { 'C6_QTDVEN' , ::ITENS:PRODUTOS[nX]:C6_QTDVEN , Nil } )
 
 		//Valida Preço de Venda negativo
 		If ::ITENS:PRODUTOS[nX]:C6_PRCVEN < 0
@@ -874,7 +879,11 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 		End If
 
 		//Valida Preço de Venda se não foi enviado no cadastro do produto e na tabela de preço
-		If ::ITENS:PRODUTOS[nX]:C6_PRCVEN == 0
+		If ::ITENS:PRODUTOS[nX]:C6_PRCVEN > 0
+
+			aAdd( aItem, { 'C6_PRCVEN' , ::ITENS:PRODUTOS[nX]:C6_PRCVEN , Nil } )
+
+		Else
 
 			If ! Empty( SA1->A1_TABELA )
 
@@ -912,7 +921,9 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			If ! ( ::ITENS:PRODUTOS[nX]:C6_TES != '500' .And. SubStr( ::ITENS:PRODUTOS[nX]:C6_TES, 1, 1 ) $ '56789' )
 
 				::RESULT_METHOD:RESULT  := 12
-				::RESULT_METHOD:MESSAGE := 'o Código do Tipo de Saída deve estar entre 5XX e 9XX (exceto o 500) ' + ::ITENS:PRODUTOS[nX]:C6_TES
+				::RESULT_METHOD:MESSAGE := 'O Código do Tipo de Saída deve estar entre 5XX e 9XX (exceto o 500) ' + ::ITENS:PRODUTOS[nX]:C6_TES
+
+				Return .T.
 
 			End If
 
@@ -929,23 +940,20 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 			End If
 
+			aAdd( aItem, { 'C6_TES', ::ITENS:PRODUTOS[nX]:C6_TES, Nil } )
+
 		Else
 
 			If Empty( SB1->B1_TS )
 
 				::RESULT_METHOD:RESULT  := 11
-				::RESULT_METHOD:MESSAGE := 'Tipo de Saída não localizada ' + ::ITENS:PRODUTOS[nX]:C6_TES
+				::RESULT_METHOD:MESSAGE := 'Tipo de Saída não existente no cadastro do produto ' + ::ITENS:PRODUTOS[nX]:C6_TES
 
 				Return .T.
 
 			End If
 
 		End If
-
-		aAdd( aItem, { 'C6_PRODUTO', ::ITENS:PRODUTOS[nX]:C6_PRODUTO, Nil } )
-		aAdd( aItem, { 'C6_QTDVEN' , ::ITENS:PRODUTOS[nX]:C6_QTDVEN , Nil } )
-		aAdd( aItem, { 'C6_PRCVEN' , ::ITENS:PRODUTOS[nX]:C6_PRCVEN , Nil } )
-		aAdd( aItem, { 'C6_TES'    , ::ITENS:PRODUTOS[nX]:C6_TES    , Nil } )
 
 		aAdd( aItens, aItem )
 		aSize( aItem, 0 )
