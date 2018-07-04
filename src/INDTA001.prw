@@ -7,9 +7,9 @@
 #DEFINE STR0799 'EXCLUSÃO DE PEDIDO DE VENDA'
 #DEFINE STR0899 'MÉTODO DE CONSULTA DE PEDIDO DE VENDA'
 #DEFINE STR0999 'LIBERAÇÃO DE PEDIDO DE VENDA'
-#DEFINE STR1099 ''
+#DEFINE STR1099 'INCLUSÃO PEDIDO DE COMPRA'
 #DEFINE STR1199 ''
-#DEFINE STR1299 ''
+#DEFINE STR1299 'MÉTODO DE CONSULTA DE PEDIDO DE COMPRA'
 
 #INCLUDE 'TOTVS.CH'
 #INCLUDE 'FWMVCDEF.CH'
@@ -61,17 +61,17 @@ WSSERVICE INDTA001 DESCRIPTION STR0199
 	WSDATA C5_CONDPAG AS STRING OPTIONAL
 	WSDATA C6_ITENS      AS ITENS_VENDA
 
-	//	WSMETHOD INCLUI_PEDIDO_COMPRA   DESCRIPTION STR1099
-	//	WSDATA C7_FORNECE AS STRING
-	//	WSDATA C7_LOJA    AS STRING
-	//	WSDATA C7_COND    AS STRING OPTIONAL
-	//	WSDATA ITENS_COMPRA AS ARRAY OF ITEM_COMPRA
+	WSMETHOD INCLUI_PEDIDO_COMPRA   DESCRIPTION STR1099
+	WSDATA C7_FORNECE AS STRING
+	WSDATA C7_LOJA    AS STRING
+	WSDATA C7_COND    AS STRING OPTIONAL
+	WSDATA C7_ITENS   AS ITENS_COMPRA
 
 	WSMETHOD EXCLUI_PEDIDO_VENDA   DESCRIPTION STR0799
 	WSMETHOD CONSULTA_PEDIDO_VENDA DESCRIPTION STR0899
 	WSMETHOD LIBERA_PEDIDO_VENDA   DESCRIPTION STR0999
 	//	WSMETHOD EXCLUI_PEDIDO_COMPRA   DESCRIPTION STR1199
-	//	WSMETHOD CONSULTA_PEDIDO_COMPRA DESCRIPTION STR1299
+	WSMETHOD CONSULTA_PEDIDO_COMPRA DESCRIPTION STR1299
 	WSDATA ORDER_NUMBER AS STRING
 	WSDATA TYPE_REQUEST AS INTEGER OPTIONAL
 	WSDATA RELEASE_TYPE AS STRING OPTIONAL
@@ -111,11 +111,23 @@ Estrura de dados do item de compra
 @since 26/06/2018
 @version 12.1.017
 /*/
-WSSTRUCT ITEM_COMPRA
+WSSTRUCT DADOS_ITEM_COMPRA
 
 	WSDATA C7_PRODUTO AS STRING
 	WSDATA C7_QUANT   AS FLOAT
 	WSDATA C7_PRECO   AS FLOAT OPTIONAL
+
+ENDWSSTRUCT
+
+/*/{Protheus.doc} ITEM_VENDA
+Estrura de dados do item de venda
+@author Elton Teodoro Alves
+@since 26/06/2018
+@version 12.1.017
+/*/
+WSSTRUCT ITENS_COMPRA
+
+	WSDATA PRODUTOS AS ARRAY OF DADOS_ITEM_COMPRA
 
 ENDWSSTRUCT
 
@@ -749,7 +761,7 @@ Static Function PedVendMod()
 	oModel:addGrid('SC9-LIBERACOES','SC6-ITENS',oStrSC9)
 	oModel:getModel('SC9-LIBERACOES'):SetDescription('Liberações dos Itens do Pedido de Venda')
 	oModel:getModel('SC9-LIBERACOES'):SetOptional(.T.)
-	oModel:SetRelation('SC9-LIBERACOES', { { 'C9_FILIAL', 'C6_FILIAL' }, { 'C9_PEDIDO', 'C6_NUM' }, { 'C9_ITEM', 'C6_ITEM' } }, SC9->(IndexKey(1)) )
+	oModel:SetRelation('SC9-LIBERACOES', { { 'C9_FILIAL', 'C6_FILIAL' }, { 'C9_PEDIDO', 'C6_NUM' }, { 'C9_SEQUEN', 'C6_ITEM' } }, SC9->(IndexKey(1)) )
 
 Return oModel
 
@@ -763,7 +775,7 @@ Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pe
 @param C5_CLIENTE, Caracter, Código do Cliente
 @param C5_LOJACLI, Caracter, Filial da Pesquisa
 @param C5_CONDPAG, Caracter, Condição de Pagamento
-@param C6_ITENS, Objeto, itens do Pedido de Venda
+@param C6_ITENS, Objeto, Itens do Pedido de Venda
 @return Objeto, Objeto com dados do retorno da operação
 /*/
 WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, C5_CONDPAG, C6_ITENS WSSEND RESULT_METHOD WSSERVICE INDTA001
@@ -802,7 +814,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 	// Valida Código e Loja do Cliente
 	DbSelectArea( 'SA1' )
 	DbSetOrder( 1 )
-	DbSeek( xFilial('SA1') + PadR( C5_CLIENTE, GetSx3Cache( 'C5_CLIENTE', 'X3_TAMANHO' ) ) + PadR( C5_LOJACLI, GetSx3Cache( 'C5_LOJACLI', 'X3_TAMANHO' ) ) )
+	DbSeek( xFilial('SA1') + PadR( C5_CLIENTE, GetSx3Cache( 'A1_COD', 'X3_TAMANHO' ) ) + PadR( C5_LOJACLI, GetSx3Cache( 'A1_LOJA', 'X3_TAMANHO' ) ) )
 
 	If ! Found()
 
@@ -975,23 +987,29 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 	Next nX
 
-	MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 3 )
+	BEGIN TRANSACTION
 
-	If lMsErroAuto
+		MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 3 )
 
-		::RESULT_METHOD:RESULT  := 0
+		If lMsErroAuto
 
-		aErro := aClone( GetAutoGRLog() )
+			::RESULT_METHOD:RESULT  := 0
 
-		For nX := 1 To Len(aErro)
+			aErro := aClone( GetAutoGRLog() )
 
-			::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+			For nX := 1 To Len(aErro)
 
-		Next nX
+				::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
 
-		Return .T.
+			Next nX
 
-	End If
+			DisarmTransaction()
+
+			Return .T.
+
+		End If
+
+	END TRANSACTION
 
 	::RESULT_METHOD:RESULT  := 1
 	::RESULT_METHOD:ORDER_NUMBER := cPedido
@@ -1077,23 +1095,29 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 
 		End Do
 
-		MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 5 )
+		BEGIN TRANSACTION
 
-		If lMsErroAuto
+			MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 5 )
 
-			::RESULT_METHOD:RESULT  := 2
+			If lMsErroAuto
 
-			aErro := aClone( GetAutoGRLog() )
+				::RESULT_METHOD:RESULT  := 2
 
-			For nX := 1 To Len(aErro)
+				aErro := aClone( GetAutoGRLog() )
 
-				::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+				For nX := 1 To Len(aErro)
 
-			Next nX
+					::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
 
-			Return .T.
+				Next nX
 
-		End If
+				DisarmTransaction()
+
+				Return .T.
+
+			End If
+
+		END TRANSACTION
 
 	End If
 
@@ -1193,23 +1217,29 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 
 			End Do
 
-			MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 4 )
+			BEGIN TRANSACTION
 
-			If lMsErroAuto
+				MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 4 )
 
-				::RESULT_METHOD:RESULT  := 2
+				If lMsErroAuto
 
-				aErro := aClone( GetAutoGRLog() )
+					::RESULT_METHOD:RESULT  := 2
 
-				For nX := 1 To Len(aErro)
+					aErro := aClone( GetAutoGRLog() )
 
-					::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+					For nX := 1 To Len(aErro)
 
-				Next nX
+						::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
 
-				Return .T.
+					Next nX
 
-			End If
+					DisarmTransaction()
+
+					Return .T.
+
+				End If
+
+			END TRANSACTION
 
 		End If
 
@@ -1247,6 +1277,291 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 
 	::RESULT_METHOD:RESULT  := 1
 	::RESULT_METHOD:MESSAGE := 'Pedido Liberado.'
+
+	oSetEnv:Clear()
+
+Return .T.
+
+/*/{Protheus.doc} CONSULTA_PEDIDO_COMPRA
+Método do Web Service que retorna o XML com os dados do Pedido de Compra pesquisado.
+@author Elton Teodoro Alves
+@since 11/06/2018
+@version 12.1.017
+@param EMPRESA, Caracter, Empresa da Pesquisa
+@param FILIAL, Caracter, Filial da Pesquisa
+@param ORDER_NUMBER, Caracter, Número do Pedido de Compra da Consulta
+@param TYPE_REQUEST, Numerico, Tipo de requisição da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
+@return Objeto, Objeto com dados do retorno da operação
+/*/
+WSMETHOD CONSULTA_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQUEST WSSEND RESULT_METHOD WSSERVICE INDTA001
+
+	Local oModel  := Nil
+	Local oSetEnv := SetEnv():New()
+	Local lFound  := .F.
+
+	Default EMPRESA       := ''
+	Default FILIAL        := ''
+	Default ORDER_NUMBER  := ''
+	Default TYPE_REQUEST := 1
+
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
+
+		::RESULT_METHOD:RESULT      := 0
+		::RESULT_METHOD:MESSAGE     := oSetEnv:ErrorMessage
+
+		Return .T.
+
+	End If
+
+	oModel := PedCompMod()
+
+	oModel:SetOperation( MODEL_OPERATION_VIEW )
+
+	DbSelectArea( 'SC7' )
+	DbSetOrder( 1 )
+	lFound := DbSeek( xFilial('SC7') + ORDER_NUMBER )
+
+	oModel:Activate()
+
+	If TYPE_REQUEST == 1
+
+		If ! Empty( ORDER_NUMBER ) .And. lFound
+
+			::RESULT_METHOD:RESULT     := 1
+			::RESULT_METHOD:MESSAGE    := 'Pedido de Compra Localizado.'
+			::RESULT_METHOD:ORDER_DATA := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+
+		Else
+
+			::RESULT_METHOD:RESULT  := 2
+			::RESULT_METHOD:MESSAGE := 'Pedido de Compra não Localizado.'
+
+		End If
+
+	Else
+
+		::RESULT_METHOD:RESULT  := 3
+		::RESULT_METHOD:MESSAGE := 'Schema XSD do XML do Modelo de Dados do Pedido de Compras'
+		::RESULT_METHOD:ORDER_SCHEMA   := Encode64( oModel:GetXMLSchema() )
+
+	End If
+
+	oModel:DeActivate()
+
+	oSetEnv:Clear()
+
+Return .T.
+
+/*/{Protheus.doc} PedCompMod
+Função que monta o Model com os dados da pesquisa de Pedido de Compra
+@author Elton Teodoro Alves
+@since 11/06/2018
+@version 12.1.017
+@return Objeto, Objeto com o Modelo de Dados
+/*/
+Static Function PedCompMod()
+
+	Local oModel    := MPFormModel():New('PEDIDO_COMPRA')
+	Local oStrSC7Cb := FWFormStruct(1,'SC7')
+	Local oStrSC7It := FWFormStruct(1,'SC7')
+	Local oStrSD1   := FWFormStruct(1,'SD1')
+
+	oStrSC7Cb:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+	oStrSC7It:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
+	oStrSD1:SetProperty  ( '*' , MODEL_FIELD_INIT, Nil )
+
+	oModel:SetDescription('Pedido de Compra')
+
+	oModel:addFields('SC7-CABECALHO',,oStrSC7Cb)
+	oModel:getModel('SC7-CABECALHO'):SetDescription('Cabecalho do Pedido de Compra')
+	oModel:SetPrimaryKey({ 'C7_NUM' })
+
+	oModel:addGrid('SC7-ITENS','SC7-CABECALHO',oStrSC7It)
+	oModel:getModel('SC7-ITENS'):SetDescription('Itens do Pedido de Compra')
+	oModel:getModel('SC7-ITENS'):SetOptional(.T.)
+	oModel:SetRelation('SC7-ITENS', { { 'C7_FILIAL', 'C7_FILIAL' }, { 'C7_NUM', 'C7_NUM' } }, SC7->(IndexKey(1)) )
+
+	oModel:addGrid('SD1-ITENS_NOTA_FISCAL','SC7-ITENS',oStrSD1)
+	oModel:getModel('SD1-ITENS_NOTA_FISCAL'):SetDescription('Itens da Nota Fiscal de Entrada')
+	oModel:getModel('SD1-ITENS_NOTA_FISCAL'):SetOptional(.T.)
+	oModel:SetRelation('SD1-ITENS_NOTA_FISCAL', { { 'D1_FILIAL', 'C7_FILIAL' }, { 'D1_PEDIDO', 'C7_NUM' }, { 'D1_ITEMPC', 'C7_ITEM' } }, SD1->(IndexKey(1)) )
+
+Return oModel
+
+/*/{Protheus.doc} INCLUI_PEDIDO_COMPRA
+Método de Inclusão de Pedido de Compra
+@author Elton Teodoro Alves
+@since 11/06/2018
+@version 12.1.017
+@param EMPRESA, Caracter, Empresa da Pesquisa
+@param FILIAL, Caracter, Filial da Pesquisa
+@param C7_FORNECE, Caracter, Número do Pedido de Venda da Consulta
+@param C7_LOJA, Caracter, Tipo de Liberação
+@param C7_COND, Caracter, Condição de Pagamento do Pedido de Compra
+@param C7_ITENS, Objeto, Itens do Pedido de Compra
+@return Objeto, Objeto com dados do retorno da operação
+/*/
+WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C7_COND, C7_ITENS WSSEND RESULT_METHOD WSSERVICE INDTA001
+
+	Local aCabec  := {}
+	Local aItens  := {}
+	Local aItem   := {}
+	Local cPedido := ''
+	Local nX      := 0
+	Local oSetEnv := SetEnv():New()
+	Local aErro   := {}
+
+	Default EMPRESA       := ''
+	Default FILIAL        := ''
+
+	Private	lMsErroAuto    := .F.
+	Private	lMsHelpAuto    := .T.
+	Private	lAutoErrNoFile := .T.
+
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
+
+		::RESULT_METHOD:RESULT      := 0
+		::RESULT_METHOD:MESSAGE     := oSetEnv:ErrorMessage
+
+		Return .T.
+
+	End If
+
+	aAdd( aCabec, { 'C7_EMISSAO', dDataBase     , Nil } )
+	aAdd( aCabec, { 'C7_CONTATO', ''            , Nil } )
+
+	// Valida Código e Loja do Fornecedor
+	DbSelectArea( 'SA2' )
+	DbSetOrder( 1 )
+	DbSeek( xFilial('SA2') + PadR( C7_FORNECE, GetSx3Cache( 'A2_COD', 'X3_TAMANHO' ) ) + PadR( C7_LOJA, GetSx3Cache( 'A2_LOJA', 'X3_TAMANHO' ) ) )
+
+	If ! Found()
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE := 'Código/Loja do fornecedor não localizado'
+
+		Return .T.
+
+	End If
+
+	aAdd( aCabec, { 'C7_FORNECE', ::C7_FORNECE, Nil } )
+	aAdd( aCabec, { 'C7_LOJA'   , ::C7_LOJA   , Nil } )
+	aAdd( aCabec, { 'CT_FILENT' , ::C7_LOJA   , Nil } )
+
+	//Valida condição de pagamento
+	If Empty( ::C7_COND ) .And. Empty( SA2->A2_COND )
+
+		::RESULT_METHOD:RESULT  := 4
+		::RESULT_METHOD:MESSAGE := 'Condição de Pagamento não existente no cadastro do Fornecedor'
+
+		Return .T.
+
+	ElseIf ! Empty( ::C7_COND )
+
+		DbSelectArea( 'SE4' )
+		DbSetOrder( 1 )
+		DbSeek( xFilial('SE4') + ::C7_COND )
+
+		If ! Found()
+
+			::RESULT_METHOD:RESULT  := 3
+			::RESULT_METHOD:MESSAGE := 'Condição de Pagamento informada não localizada ' + ::C7_COND
+
+			Return .T.
+
+		End If
+
+	End If
+
+	aAdd( aCabec, { 'C7_COND', ::C7_COND, Nil } )
+
+	For nX := 1 To Len( ::C7_ITENS:PRODUTOS )
+
+		//Valida Código do Produto preenchido
+		If Empty( ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO )
+
+			::RESULT_METHOD:RESULT  := 6
+			::RESULT_METHOD:MESSAGE := 'Código do Produto não Informado, item ' + cValtoChar( nX )
+
+			Return .T.
+
+		End If
+
+		//Valida código do produto existente
+		DbSelectArea( 'SB1' )
+		DbSetOrder( 1 )
+		DbSeek( xFilial('SB1') + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO )
+
+		If ! Found()
+
+			::RESULT_METHOD:RESULT  := 5
+			::RESULT_METHOD:MESSAGE := 'Código do Produto não localizado ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
+
+			Return .T.
+
+		End If
+
+		aAdd( aItem, { 'C7_PRODUTO', ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO, Nil } )
+
+		//Valida Quantidade
+		If ::C7_ITENS:PRODUTOS[nX]:C7_QUANT <= 0
+
+			::RESULT_METHOD:RESULT  := 7
+			::RESULT_METHOD:MESSAGE := 'Quantidade do produto menor ou igual a que zero ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
+
+			Return .T.
+
+		End If
+
+		aAdd( aItem, { 'C7_QUANT' , ::C7_ITENS:PRODUTOS[nX]:C7_QUANT, Nil } )
+
+		//Valida Preço de Compra negativo
+		If ValType( ::C7_ITENS:PRODUTOS[nX]:C7_PRECO ) # 'U' .And. ::C7_ITENS:PRODUTOS[nX]:C7_PRECO <= 0
+
+			::RESULT_METHOD:RESULT  := 8
+			::RESULT_METHOD:MESSAGE := 'Preço do produto menor ou igual a zero ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
+
+			Return .T.
+
+		End If
+
+		aAdd( aItem, { 'C7_PRECO' , ::C7_ITENS:PRODUTOS[nX]:C7_PRECO, Nil } )
+		aAdd( aItem, { 'C7_TOTAL' , ::C7_ITENS:PRODUTOS[nX]:C7_QUANT * ::C7_ITENS:PRODUTOS[nX]:C7_PRECO, Nil } )
+
+		aAdd( aItens, Aclone( aItem ) )
+		aSize( aItem, 0 )
+
+	Next nX
+
+	BEGIN TRANSACTION
+
+		aAdd( aCabec, { 'C7_NUM'    , cPedido := GetNumSC7(.T.), Nil } )
+
+		MSExecAuto( { | W, X, Y, Z | MATA120( W, X, Y, Z ) }, 1, aCabec, aItens, 3 )
+
+		If lMsErroAuto
+
+			::RESULT_METHOD:RESULT  := 0
+
+			aErro := aClone( GetAutoGRLog() )
+
+			For nX := 1 To Len(aErro)
+
+				::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+
+			Next nX
+
+			DisarmTransaction()
+
+			Return .T.
+
+		End If
+
+	END TRANSACTION
+
+	::RESULT_METHOD:RESULT  := 1
+	::RESULT_METHOD:ORDER_NUMBER := cPedido
+	::RESULT_METHOD:MESSAGE := 'Pedido Incluído'
 
 	oSetEnv:Clear()
 
