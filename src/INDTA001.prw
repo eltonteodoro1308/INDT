@@ -225,9 +225,7 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 
 	oModel:DeActivate()
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} ClientesMd
 Função que monta o Model com os dados da pesquisa de clientes
@@ -391,9 +389,7 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 
 	oModel:DeActivate()
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} ProductMod
 Função que monta o Model com os dados da pesquisa de produtos
@@ -524,9 +520,7 @@ WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA
 
 	oModel:DeActivate()
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} TranspMod
 Função que monta o Model com os dados da pesquisa de transportadoras
@@ -621,9 +615,7 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 
 	oModel:DeActivate()
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} TranspMod
 Função que monta o Model com os dados da pesquisa de transportadoras
@@ -726,9 +718,7 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 	oModel:DeActivate()
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} PedVendMod
 Função que monta o Model com os dados da pesquisa de Pedido de Venda
@@ -821,7 +811,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 		::RESULT_METHOD:RESULT  := 2
 		::RESULT_METHOD:MESSAGE := 'Código/Loja do cliente não localizado'
 
-		Return .T.
+		Return oSetEnv:Clear()
 
 	End If
 
@@ -834,7 +824,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 		::RESULT_METHOD:RESULT  := 4
 		::RESULT_METHOD:MESSAGE := 'Condição de Pagamento não existente no cadastro do cliente'
 
-		Return .T.
+		Return oSetEnv:Clear()
 
 	ElseIf ! Empty( ::C5_CONDPAG )
 
@@ -847,7 +837,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			::RESULT_METHOD:RESULT  := 3
 			::RESULT_METHOD:MESSAGE := 'Condição de Pagamento informada não localizada ' + ::C5_CONDPAG
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -863,7 +853,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			::RESULT_METHOD:RESULT  := 6
 			::RESULT_METHOD:MESSAGE := 'Código do Produto não Informado, item ' + cValtoChar( nX )
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -877,7 +867,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			::RESULT_METHOD:RESULT  := 5
 			::RESULT_METHOD:MESSAGE := 'Código do Produto não localizado ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -889,7 +879,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			::RESULT_METHOD:RESULT  := 7
 			::RESULT_METHOD:MESSAGE := 'Quantidade do produto menor ou igual a que zero ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -901,7 +891,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 			::RESULT_METHOD:RESULT  := 8
 			::RESULT_METHOD:MESSAGE := 'Preço do produto menor que zero ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -923,7 +913,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 					::RESULT_METHOD:RESULT  := 9
 					::RESULT_METHOD:MESSAGE := 'Preço do produto não localizado em seu cadastro ou em tabela de preço vinculada ao cliente ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
 
-					Return .T.
+					Return oSetEnv:Clear()
 
 				End If
 
@@ -934,7 +924,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 					::RESULT_METHOD:RESULT  := 9
 					::RESULT_METHOD:MESSAGE := 'Preço do produto não localizado em seu cadastro ou em tabela de preço vinculada ao cliente ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
 
-					Return .T.
+					Return oSetEnv:Clear()
 
 				End If
 
@@ -950,7 +940,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 				::RESULT_METHOD:RESULT  := 12
 				::RESULT_METHOD:MESSAGE := 'O Código do Tipo de Saída deve estar entre 5XX e 9XX (exceto o 500) ' + ::C6_ITENS:PRODUTOS[nX]:C6_TES
 
-				Return .T.
+				Return oSetEnv:Clear()
 
 			End If
 
@@ -963,7 +953,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 				::RESULT_METHOD:RESULT  := 10
 				::RESULT_METHOD:MESSAGE := 'Tipo de Saída não localizada ' + ::C6_ITENS:PRODUTOS[nX]:C6_TES
 
-				Return .T.
+				Return oSetEnv:Clear()
 
 			End If
 
@@ -976,7 +966,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 				::RESULT_METHOD:RESULT  := 11
 				::RESULT_METHOD:MESSAGE := 'Tipo de Saída não existente no cadastro do produto ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
 
-				Return .T.
+				Return oSetEnv:Clear()
 
 			End If
 
@@ -1005,7 +995,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 			DisarmTransaction()
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1015,9 +1005,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 	::RESULT_METHOD:ORDER_NUMBER := cPedido
 	::RESULT_METHOD:MESSAGE := 'Pedido Incluído'
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} EXCLUI_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
@@ -1064,7 +1052,7 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 		::RESULT_METHOD:RESULT  := 2
 		::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
 
-		Return .T.
+		Return oSetEnv:Clear()
 
 	Else
 
@@ -1113,7 +1101,7 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 
 				DisarmTransaction()
 
-				Return .T.
+				Return oSetEnv:Clear()
 
 			End If
 
@@ -1124,10 +1112,7 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 	::RESULT_METHOD:RESULT  := 1
 	::RESULT_METHOD:MESSAGE := 'Pedido Excluído'
 
-	oSetEnv:Clear()
-
-Return .T.
-
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} LIBERA_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
@@ -1235,7 +1220,7 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 
 					DisarmTransaction()
 
-					Return .T.
+					Return oSetEnv:Clear()
 
 				End If
 
@@ -1259,7 +1244,7 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 					::RESULT_METHOD:RESULT  := 2
 					::RESULT_METHOD:MESSAGE := 'Deve-se liberar o crédito antes de liberar o estoque.'
 
-					Return .T.
+					Return oSetEnv:Clear()
 
 				Else
 
@@ -1278,9 +1263,7 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 	::RESULT_METHOD:RESULT  := 1
 	::RESULT_METHOD:MESSAGE := 'Pedido Liberado.'
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} CONSULTA_PEDIDO_COMPRA
 Método do Web Service que retorna o XML com os dados do Pedido de Compra pesquisado.
@@ -1348,9 +1331,7 @@ WSMETHOD CONSULTA_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_RE
 
 	oModel:DeActivate()
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} PedCompMod
 Função que monta o Model com os dados da pesquisa de Pedido de Compra
@@ -1440,7 +1421,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 		::RESULT_METHOD:RESULT  := 2
 		::RESULT_METHOD:MESSAGE := 'Código/Loja do fornecedor não localizado'
 
-		Return .T.
+		Return oSetEnv:Clear()
 
 	End If
 
@@ -1454,7 +1435,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 		::RESULT_METHOD:RESULT  := 4
 		::RESULT_METHOD:MESSAGE := 'Condição de Pagamento não existente no cadastro do Fornecedor'
 
-		Return .T.
+		Return oSetEnv:Clear()
 
 	ElseIf ! Empty( ::C7_COND )
 
@@ -1467,7 +1448,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 			::RESULT_METHOD:RESULT  := 3
 			::RESULT_METHOD:MESSAGE := 'Condição de Pagamento informada não localizada ' + ::C7_COND
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1483,7 +1464,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 			::RESULT_METHOD:RESULT  := 6
 			::RESULT_METHOD:MESSAGE := 'Código do Produto não Informado, item ' + cValtoChar( nX )
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1497,7 +1478,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 			::RESULT_METHOD:RESULT  := 5
 			::RESULT_METHOD:MESSAGE := 'Código do Produto não localizado ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1509,7 +1490,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 			::RESULT_METHOD:RESULT  := 7
 			::RESULT_METHOD:MESSAGE := 'Quantidade do produto menor ou igual a que zero ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1521,7 +1502,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 			::RESULT_METHOD:RESULT  := 8
 			::RESULT_METHOD:MESSAGE := 'Preço do produto menor ou igual a zero ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1553,7 +1534,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 
 			DisarmTransaction()
 
-			Return .T.
+			Return oSetEnv:Clear()
 
 		End If
 
@@ -1563,9 +1544,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 	::RESULT_METHOD:ORDER_NUMBER := cPedido
 	::RESULT_METHOD:MESSAGE := 'Pedido Incluído'
 
-	oSetEnv:Clear()
-
-Return .T.
+Return oSetEnv:Clear()
 
 /*/{Protheus.doc} GetSM0Str
 Função que monta a estrutura de campos do model da tabela SM0
@@ -1681,4 +1660,4 @@ Method Clear() Class SetEnv
 
 	End If
 
-Return
+Return .T.
