@@ -1,102 +1,11 @@
-#DEFINE STR0199 'WEB SERVICE DE INTEGRAÇÃO'
-#DEFINE STR0299 'MÉTODO DE PESQUISA DO CADASTRO DE CLIENTES'
-#DEFINE STR0399 'MÉTODO DE PESQUISA DO CADASTRO DE PRODUTOS'
-#DEFINE STR0499 'MÉTODO DE PESQUISA DO CADASTRO DE TRANSPORTADORAS'
-#DEFINE STR0599 'MÉTODO DE PESQUISA DO CADASTRO DE CONDIÇÕES DE PGAMENTO'
-#DEFINE STR0699 'INCLUSÃO PEDIDO DE VENDA'
-#DEFINE STR0799 'EXCLUSÃO DE PEDIDO DE VENDA'
-#DEFINE STR0899 'MÉTODO DE CONSULTA DE PEDIDO DE VENDA'
-#DEFINE STR0999 'LIBERAÇÃO DE PEDIDO DE VENDA'
-#DEFINE STR1099 'INCLUSÃO PEDIDO DE COMPRA'
-#DEFINE STR1199 ''
-#DEFINE STR1299 'MÉTODO DE CONSULTA DE PEDIDO DE COMPRA'
-
 #INCLUDE 'TOTVS.CH'
 #INCLUDE 'FWMVCDEF.CH'
 #INCLUDE 'APWEBSRV.CH'
 
-/*/{Protheus.doc} INDTA001
-Web Service para integração com protheus
-@author Elton Teodoro Alves
-@since 11/06/2018
-@version 12.1.017
-/*/
-WSSERVICE INDTA001 DESCRIPTION STR0199
-
-	WSDATA EMPRESA       AS STRING  OPTIONAL
-	WSDATA FILIAL        AS STRING  OPTIONAL
-	WSDATA TYPE_RESPONSE AS INTEGER OPTIONAL
-	WSDATA RESPONSE      AS STRING
-	WSDATA RESULT_METHOD AS RESULT
-
-	WSMETHOD PESQUISA_CLIENTE DESCRIPTION STR0299
-	WSDATA FIELDS_SA1    AS STRING  OPTIONAL
-	WSDATA FIELDS_DA0    AS STRING  OPTIONAL
-	WSDATA FIELDS_DA1    AS STRING  OPTIONAL
-	WSDATA WHERE_SA1     AS STRING  OPTIONAL
-	WSDATA WHERE_DA1     AS STRING  OPTIONAL
-	WSDATA SEND_DA0      AS INTEGER OPTIONAL
-
-	WSMETHOD PESQUISA_PRODUTO DESCRIPTION STR0399
-	WSDATA FIELDS_SB1    AS STRING  OPTIONAL
-	WSDATA FIELDS_SB2    AS STRING  OPTIONAL
-	WSDATA FIELDS_SG1    AS STRING  OPTIONAL
-	WSDATA WHERE_SB1     AS STRING  OPTIONAL
-	WSDATA WHERE_SB2     AS STRING  OPTIONAL
-	WSDATA WHERE_SG1     AS STRING  OPTIONAL
-	WSDATA SEND_SB2      AS INTEGER OPTIONAL
-	WSDATA SEND_SG1      AS INTEGER OPTIONAL
-
-	WSMETHOD PESQUISA_TRANSPORTADORA DESCRIPTION STR0499
-	WSDATA FIELDS_SA4    AS STRING OPTIONAL
-	WSDATA WHERE_SA4     AS STRING OPTIONAL
-
-	WSMETHOD PESQUISA_CONDICAO_PAGTO DESCRIPTION STR0599
-	WSDATA FIELDS_SE4    AS STRING OPTIONAL
-	WSDATA WHERE_SE4     AS STRING OPTIONAL
-
-	WSMETHOD INCLUI_PEDIDO_VENDA DESCRIPTION STR0699
-	WSDATA C5_CLIENTE AS STRING
-	WSDATA C5_LOJACLI AS STRING
-	WSDATA C5_CONDPAG AS STRING OPTIONAL
-	WSDATA C6_ITENS      AS ITENS_VENDA
-
-	WSMETHOD INCLUI_PEDIDO_COMPRA   DESCRIPTION STR1099
-	WSDATA C7_FORNECE AS STRING
-	WSDATA C7_LOJA    AS STRING
-	WSDATA C7_COND    AS STRING OPTIONAL
-	WSDATA C7_ITENS   AS ITENS_COMPRA
-
-	WSMETHOD EXCLUI_PEDIDO_VENDA   DESCRIPTION STR0799
-	WSMETHOD CONSULTA_PEDIDO_VENDA DESCRIPTION STR0899
-	WSMETHOD LIBERA_PEDIDO_VENDA   DESCRIPTION STR0999
-	//	WSMETHOD EXCLUI_PEDIDO_COMPRA   DESCRIPTION STR1199
-	WSMETHOD CONSULTA_PEDIDO_COMPRA DESCRIPTION STR1299
-	WSDATA ORDER_NUMBER AS STRING
-	WSDATA TYPE_REQUEST AS INTEGER OPTIONAL
-	WSDATA RELEASE_TYPE AS STRING OPTIONAL
-
-ENDWSSERVICE
-
 /*/{Protheus.doc} ITEM_VENDA
-Estrura de dados do item de venda
+Estrutura de Dados do Array dos itens do Pedido de Venda para inclusão do mesmo no método INCLUI_PEDIDO_VENDA
 @author Elton Teodoro Alves
-@since 26/06/2018
-@version 12.1.017
-/*/
-WSSTRUCT DADOS_ITEM_VENDA
-
-	WSDATA C6_PRODUTO AS STRING
-	WSDATA C6_QTDVEN  AS FLOAT
-	WSDATA C6_PRCVEN  AS FLOAT  OPTIONAL
-	WSDATA C6_TES     AS STRING OPTIONAL
-
-ENDWSSTRUCT
-
-/*/{Protheus.doc} ITEM_VENDA
-Estrura de dados do item de venda
-@author Elton Teodoro Alves
-@since 26/06/2018
+@since 05/07/2018
 @version 12.1.017
 /*/
 WSSTRUCT ITENS_VENDA
@@ -105,24 +14,25 @@ WSSTRUCT ITENS_VENDA
 
 ENDWSSTRUCT
 
-/*/{Protheus.doc} ITEM_COMPRA
-Estrura de dados do item de compra
+/*/{Protheus.doc} DADOS_ITEM_VENDA
+Estrutura de Dados do item do Pedido de Venda para inclusão do mesmo
 @author Elton Teodoro Alves
-@since 26/06/2018
+@since 05/07/2018
 @version 12.1.017
 /*/
-WSSTRUCT DADOS_ITEM_COMPRA
+WSSTRUCT DADOS_ITEM_VENDA
 
-	WSDATA C7_PRODUTO AS STRING
-	WSDATA C7_QUANT   AS FLOAT
-	WSDATA C7_PRECO   AS FLOAT OPTIONAL
+	WSDATA C6_PRODUTO AS STRING
+	WSDATA C6_QTDVEN  AS FLOAT
+	WSDATA C6_PRCVEN  AS FLOAT
+	WSDATA C6_TES     AS STRING
 
 ENDWSSTRUCT
 
-/*/{Protheus.doc} ITEM_VENDA
-Estrura de dados do item de venda
+/*/{Protheus.doc} ITENS_COMPRA
+Estrutura de Dados do Array dos itens do Pedido de Compra para inclusão do mesmo no método INCLUI_PEDIDO_COMPRA
 @author Elton Teodoro Alves
-@since 26/06/2018
+@since 05/07/2018
 @version 12.1.017
 /*/
 WSSTRUCT ITENS_COMPRA
@@ -131,32 +41,110 @@ WSSTRUCT ITENS_COMPRA
 
 ENDWSSTRUCT
 
-/*/{Protheus.doc} RESULT
-Estrura de dados do resultado do método
+/*/{Protheus.doc} DADOS_ITEM_COMPRA
+Estrutura de Dados do item do Pedido de Compra para inclusão do mesmo
 @author Elton Teodoro Alves
-@since 26/06/2018
+@since 05/07/2018
+@version 12.1.017
+/*/
+WSSTRUCT DADOS_ITEM_COMPRA
+
+	WSDATA C7_PRODUTO AS STRING
+	WSDATA C7_QUANT   AS FLOAT
+	WSDATA C7_PRECO   AS FLOAT
+
+ENDWSSTRUCT
+
+/*/{Protheus.doc} RESULT
+Estrutura de dados de retorno dos métodos:
+- CONSULTA_PEDIDO_COMPRA
+- CONSULTA_PEDIDO_VENDA
+- EXCLUI_PEDIDO_COMPRA
+- EXCLUI_PEDIDO_VENDA
+- INCLUI_PEDIDO_COMPRA
+- INCLUI_PEDIDO_VENDA
+- LIBERA_PEDIDO_VENDA
+@author Elton Teodoro Alves
+@since 05/07/2018
 @version 12.1.017
 /*/
 WSSTRUCT RESULT
 
 	WSDATA RESULT       AS INTEGER
-	WSDATA MESSAGE      AS STRING OPTIONAL
-	WSDATA ORDER_NUMBER AS STRING OPTIONAL
-	WSDATA ORDER_SCHEMA AS STRING OPTIONAL
-	WSDATA ORDER_DATA   AS STRING OPTIONAL
+	WSDATA MESSAGE      AS STRING
+	WSDATA ORDER_NUMBER AS STRING
+	WSDATA ORDER_SCHEMA AS STRING
+	WSDATA ORDER_DATA   AS STRING
 
 ENDWSSTRUCT
 
-/*/{Protheus.doc} CLIENTE
-Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisados.
+/*/{Protheus.doc} INDTA001
+Web Service para integração com protheus
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
+@version 12.1.017
+/*/
+WSSERVICE INDTA001 DESCRIPTION 'WEB SERVICE DE INTEGRAÇÃO'
+
+	WSDATA EMPRESA       AS STRING
+	WSDATA FILIAL        AS STRING
+	WSDATA TYPE_RESPONSE AS INTEGER
+	WSDATA RESPONSE      AS STRING
+	WSDATA RESULT_METHOD AS RESULT
+	WSDATA FIELDS_SA1    AS STRING
+	WSDATA FIELDS_DA0    AS STRING
+	WSDATA FIELDS_DA1    AS STRING
+	WSDATA WHERE_SA1     AS STRING
+	WSDATA WHERE_DA1     AS STRING
+	WSDATA SEND_DA0      AS INTEGER
+	WSDATA FIELDS_SB1    AS STRING
+	WSDATA FIELDS_SB2    AS STRING
+	WSDATA FIELDS_SG1    AS STRING
+	WSDATA WHERE_SB1     AS STRING
+	WSDATA WHERE_SB2     AS STRING
+	WSDATA WHERE_SG1     AS STRING
+	WSDATA SEND_SB2      AS INTEGER
+	WSDATA SEND_SG1      AS INTEGER
+	WSDATA FIELDS_SA4    AS STRING
+	WSDATA WHERE_SA4     AS STRING
+	WSDATA FIELDS_SE4    AS STRING
+	WSDATA WHERE_SE4     AS STRING
+	WSDATA C5_CLIENTE    AS STRING
+	WSDATA C5_LOJACLI    AS STRING
+	WSDATA C5_CONDPAG    AS STRING
+	WSDATA C6_ITENS      AS ITENS_VENDA
+	WSDATA C7_FORNECE    AS STRING
+	WSDATA C7_LOJA       AS STRING
+	WSDATA C7_COND       AS STRING
+	WSDATA C7_ITENS      AS ITENS_COMPRA
+	WSDATA ORDER_NUMBER  AS STRING
+	WSDATA TYPE_REQUEST  AS INTEGER
+	WSDATA RELEASE_TYPE  AS STRING
+
+	WSMETHOD PESQUISA_CLIENTE        DESCRIPTION 'MÉTODO DE PESQUISA DO CADASTRO DE CLIENTES'
+	WSMETHOD PESQUISA_PRODUTO        DESCRIPTION 'MÉTODO DE PESQUISA DO CADASTRO DE PRODUTOS'
+	WSMETHOD PESQUISA_TRANSPORTADORA DESCRIPTION 'MÉTODO DE PESQUISA DO CADASTRO DE TRANSPORTADORAS'
+	WSMETHOD PESQUISA_CONDICAO_PAGTO DESCRIPTION 'MÉTODO DE PESQUISA DO CADASTRO DE CONDIÇÕES DE PGAMENTO'
+	WSMETHOD CONSULTA_PEDIDO_VENDA   DESCRIPTION 'MÉTODO DE CONSULTA DE PEDIDO DE VENDA'
+	WSMETHOD INCLUI_PEDIDO_COMPRA    DESCRIPTION 'INCLUSÃO PEDIDO DE COMPRA'
+	WSMETHOD EXCLUI_PEDIDO_VENDA     DESCRIPTION 'EXCLUSÃO DE PEDIDO DE VENDA'
+	WSMETHOD LIBERA_PEDIDO_VENDA     DESCRIPTION 'LIBERAÇÃO DE PEDIDO DE VENDA'
+	WSMETHOD CONSULTA_PEDIDO_COMPRA  DESCRIPTION 'MÉTODO DE CONSULTA DE PEDIDO DE COMPRA'
+	WSMETHOD INCLUI_PEDIDO_VENDA     DESCRIPTION 'INCLUSÃO PEDIDO DE VENDA'
+	WSMETHOD EXCLUI_PEDIDO_COMPRA    DESCRIPTION 'EXCLUSÃO DE PEDIDO DE VENDA'
+
+ENDWSSERVICE
+
+/*/{Protheus.doc} PESQUISA_CLIENTE
+Método do Web Service que retorna o XML com os dados do(s) cliente(s) pesquisados e sua tabela de preço vinculada.
+@author Elton Teodoro Alves
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
 @param FIELDS_SA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Clientes
 @param FIELDS_DA0, Caracter, Campos a serem retornados na pesquisa da tabela DA0-Tabela de Preço
-@param FIELDS_DA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Itens da Tabela de Preço
+@param FIELDS_DA1, Caracter, Campos a serem retornados na pesquisa da tabela DA1-Itens da Tabela de Preço
 @param WHERE_SA1, Caracter, Filtro em formato SQL a ser aplicado na pesquisa da tabela SA1-Clientes
 @param WHERE_DA1, Caracter, Filtro em formato SQL a ser aplicado na pesquisa da tabela DA1-Itens da Tabela de Preços
 @param SEND_DA0, Numerico, Indica se envia no XML a tabela de Preço do Cliente 1=Sim 2=Não
@@ -169,16 +157,6 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 	Local oGridSA1   := Nil
 	Local oGridDA1   := Nil
 	Local oSetEnv    := SetEnv():New()
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-	Default FIELDS_SA1    := ''
-	Default FIELDS_DA0    := ''
-	Default FIELDS_DA1    := ''
-	Default WHERE_SA1     := ''
-	Default WHERE_DA1     := ''
-	Default SEND_DA0      := 2
-	Default TYPE_RESPONSE := 1
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
@@ -213,13 +191,13 @@ WSMETHOD PESQUISA_CLIENTE WSRECEIVE EMPRESA, FILIAL, FIELDS_SA1, FIELDS_DA0, FIE
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 1
+	If ! Empty( TYPE_RESPONSE ) .And. TYPE_RESPONSE # 1
 
-		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+		::RESPONSE := Encode64( oModel:GetXMLSchema() )
 
 	Else
 
-		::RESPONSE := Encode64( oModel:GetXMLSchema() )
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	End If
 
@@ -230,7 +208,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} ClientesMd
 Função que monta o Model com os dados da pesquisa de clientes
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param FIELDS_SA1, Caracter, Campos a serem retornados na pesquisa da tabela SA1-Clientes
 @param FIELDS_DA0, Caracter, Campos a serem retornados na pesquisa da tabela DA0-Tabela de Preço
@@ -275,40 +253,37 @@ Static Function ClienteMod( FIELDS_SA1, FIELDS_DA0, FIELDS_DA1, SEND_DA0 )
 
 	oModel:addGrid('SA1-CLIENTES','SM0-FILIAL',oStrSA1)
 	oModel:getModel('SA1-CLIENTES'):SetDescription('Lista de Clientes ')
-	oModel:getModel('SA1-CLIENTES'):SetOptional(.T.)
 	oModel:SetRelation('SA1-CLIENTES', { { 'A1_FILIAL', 'M0_CODFIL' } }, SA1->(IndexKey(1)) )
 
 	If SEND_DA0 == 1
 
 		oModel:Addfields('DA0-LISTA_DE_PRECOS','SA1-CLIENTES',oStrDA0)
 		oModel:getModel('DA0-LISTA_DE_PRECOS'):SetDescription('Cabeçalho Lista de Preços')
-		oModel:getModel('DA0-LISTA_DE_PRECOS'):SetOptional(.T.)
 		oModel:SetRelation('DA0-LISTA_DE_PRECOS', { { 'DA0_FILIAL', 'xFilial("DA0")' }, { 'DA0_CODTAB', 'A1_TABELA' } }, DA0->(IndexKey(1)) )
 
 		oModel:addGrid('DA1-ITENS_LISTA_DE_PRECOS','DA0-LISTA_DE_PRECOS',oStrDA1)
 		oModel:getModel('DA1-ITENS_LISTA_DE_PRECOS'):SetDescription('Itens da Lista de Preços')
-		oModel:getModel('DA1-ITENS_LISTA_DE_PRECOS'):SetOptional(.T.)
 		oModel:SetRelation('DA1-ITENS_LISTA_DE_PRECOS', { { 'DA1_FILIAL', 'xFilial("DA1")' }, { 'DA1_CODTAB', 'DA0_CODTAB' } }, DA1->(IndexKey(1)) )
 
 	End If
 
 Return oModel
 
-/*/{Protheus.doc} PRODUTO
+/*/{Protheus.doc} PESQUISA_PRODUTO
 Método do Web Service que retorna o XML com os dados do(s) produtos(s) pesquisados.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
 @param FIELDS_SB1, Caracter, Campos a serem retornados da Tabela SB1 – Descrição Genérica do Produto
 @param FIELDS_SB2, Caracter, Campos a serem retornados da Tabela SB2 – Saldo Físico e Financeiro
-@param FIELDS_SG1, Caracter, Campos a serem retornados do cadastro da Tabela SG1 – Estrutura dos Produtos
+@param FIELDS_SG1, Caracter, Campos a serem retornados da Tabela SG1 – Estrutura dos Produtos
 @param WHERE_SB1, Caracter, Filtro em format SQL aplicado a Grid da Tabela SB1 – Cadastro de Produtos
 @param WHERE_SB2, Caracter, Filtro em format SQL aplicado a Grid da Tabela SB2 – Saldo Físico e Financeiro
 @param WHERE_SG1, Caracter, Filtro em format SQL aplicado a Grid da Tabela SG1 – Estrutura dos Produtos
 @param SEND_SB2, Numerico, Indica se Retorna na Pesquisa a Tabela SB2 – Saldo Físico e Financeiro: 1=Sim 2=Não
-@param SEND_SG1, Numerico,  Indica se Retorna na Pesquisa a Tabela SG1 – Estrutura dos Produtos: 1=Sim 2=Não
+@param SEND_SG1, Numerico, Indica se Retorna na Pesquisa a Tabela SG1 – Estrutura dos Produtos: 1=Sim 2=Não
 @param TYPE_RESPONSE, Numerico, Tipo de retorno da pesquisa 1=XML com os dados da pesquisa 2=XSD com o Schema do XML da pesquisa
 @return Caracter, Xml com os dados do(s) produto(s) ou Schema do Xml
 /*/
@@ -319,18 +294,6 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 	Local oGridSB2   := Nil
 	Local oGridSG1   := Nil
 	Local oSetEnv    := SetEnv():New()
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-	Default FIELDS_SB1    := ''
-	Default FIELDS_SB2    := ''
-	Default FIELDS_SG1    := ''
-	Default WHERE_SB1     := ''
-	Default WHERE_SB2     := ''
-	Default WHERE_SG1     := ''
-	Default SEND_SB2      := 2
-	Default SEND_SG1      := 2
-	Default TYPE_RESPONSE := 1
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
@@ -377,13 +340,13 @@ WSMETHOD PESQUISA_PRODUTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SB1, FIELDS_SB2, FIE
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 1
+	If ! Empty( TYPE_RESPONSE ) .And. TYPE_RESPONSE # 1
 
-		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+		::RESPONSE := Encode64( oModel:GetXMLSchema() )
 
 	Else
 
-		::RESPONSE := Encode64( oModel:GetXMLSchema() )
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	End If
 
@@ -394,7 +357,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} ProductMod
 Função que monta o Model com os dados da pesquisa de produtos
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param FIELDS_SB1, Caracter, Campos a serem retornados da Tabela SB1 – Descrição Genérica do Produto
 @param FIELDS_SB2, Caracter, Campos a serem retornados da Tabela SB2 – Saldo Físico e Financeiro
@@ -405,7 +368,7 @@ Função que monta o Model com os dados da pesquisa de produtos
 /*/
 Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_SG1 )
 
-	Local cAlias  := 'SB1'
+	Local cAlias := 'SB1'
 	Local oModel  := MPFormModel():New('PRODUTOS')
 	Local oStrSM0 := GetSM0Str( cAlias )
 	Local oStrSB1 := Nil
@@ -440,14 +403,12 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 
 	oModel:addGrid('SB1-PRODUTOS','SM0-FILIAL',oStrSB1)
 	oModel:getModel('SB1-PRODUTOS'):SetDescription('Lista de Produtos ')
-	oModel:getModel('SB1-PRODUTOS'):SetOptional(.T.)
 	oModel:SetRelation('SB1-PRODUTOS', { { 'B1_FILIAL', 'M0_CODFIL' } }, SB1->(IndexKey(1)) )
 
 	If SEND_SB2 == 1
 
 		oModel:addGrid('SB2-SALDOS','SB1-PRODUTOS',oStrSB2)
 		oModel:getModel('SB2-SALDOS'):SetDescription('Lista de Saldos')
-		oModel:getModel('SB2-SALDOS'):SetOptional(.T.)
 		oModel:SetRelation('SB2-SALDOS', { { 'B2_FILIAL', 'xFilial("SB2")' }, { 'B2_COD', 'B1_COD' } }, SB2->(IndexKey(1)) )
 
 	End If
@@ -456,17 +417,16 @@ Static Function ProdutoMod( FIELDS_SB1, FIELDS_SB2, FIELDS_SG1, SEND_SB2, SEND_S
 
 		oModel:addGrid('SG1-ESTRUTURA','SB1-PRODUTOS',oStrSG1)
 		oModel:getModel('SG1-ESTRUTURA'):SetDescription('Estrutura do Produto')
-		oModel:getModel('SG1-ESTRUTURA'):SetOptional(.T.)
 		oModel:SetRelation('SG1-ESTRUTURA', { { 'G1_FILIAL', 'xFilial("SG1")' }, { 'G1_COD', 'B1_COD' } }, SG1->(IndexKey(1)) )
 
 	End If
 
 Return oModel
 
-/*/{Protheus.doc} TRANSPORTADORA
+/*/{Protheus.doc} PESQUISA_TRANSPORTADORA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -480,12 +440,6 @@ WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA
 	Local oModel     := Nil
 	Local oGridSA4   := Nil
 	Local oSetEnv    := SetEnv():New()
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-	Default FIELDS_SA4    := ''
-	Default WHERE_SA4     := ''
-	Default TYPE_RESPONSE := 1
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
@@ -508,13 +462,13 @@ WSMETHOD PESQUISA_TRANSPORTADORA WSRECEIVE EMPRESA, FILIAL, FIELDS_SA4, WHERE_SA
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 1
+	If ! Empty( TYPE_RESPONSE ) .And. TYPE_RESPONSE # 1
 
-		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+		::RESPONSE := Encode64( oModel:GetXMLSchema() )
 
 	Else
 
-		::RESPONSE := Encode64( oModel:GetXMLSchema() )
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	End If
 
@@ -525,7 +479,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} TranspMod
 Função que monta o Model com os dados da pesquisa de transportadoras
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param FIELDS_SA4, Caracter, Campos a serem retornados da Tabela SA4 – Transportadoras
 @return Objeto, Objeto com o Modelo de Dados
@@ -553,15 +507,14 @@ Static Function TranspMod( FIELDS_SA4 )
 
 	oModel:addGrid('SA4-TRANSPORTADORAS','SM0-FILIAL',oStrSA4)
 	oModel:getModel('SA4-TRANSPORTADORAS'):SetDescription('Lista de Transportadoras ')
-	oModel:getModel('SA4-TRANSPORTADORAS'):SetOptional(.T.)
 	oModel:SetRelation('SA4-TRANSPORTADORAS', { { 'A4_FILIAL', 'M0_CODFIL' } }, SA4->(IndexKey(1)) )
 
 Return oModel
 
-/*/{Protheus.doc} CONDICAO_PAGTO
-Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
+/*/{Protheus.doc} PESQUISA_CONDICAO_PAGTO
+Método do Web Service que retorna o XML com os dados da(s) Condição(ões) de Pagamento pesquisadas.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -575,12 +528,6 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 	Local oModel     := Nil
 	Local oGridSE4   := Nil
 	Local oSetEnv    := SetEnv():New()
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-	Default FIELDS_SE4    := ''
-	Default WHERE_SE4     := ''
-	Default TYPE_RESPONSE := 1
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
@@ -603,13 +550,13 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 
 	oModel:Activate()
 
-	If TYPE_RESPONSE # 1
+	If ! Empty( TYPE_RESPONSE ) .And. TYPE_RESPONSE # 1
 
-		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
+		::RESPONSE := Encode64( oModel:GetXMLSchema() )
 
 	Else
 
-		::RESPONSE := Encode64( oModel:GetXMLSchema() )
+		::RESPONSE := Encode64( oModel:GetXMLData(,,,,.F.,.T.,.F.) )
 
 	End If
 
@@ -617,10 +564,10 @@ WSMETHOD PESQUISA_CONDICAO_PAGTO WSRECEIVE EMPRESA, FILIAL, FIELDS_SE4, WHERE_SE
 
 Return oSetEnv:Clear()
 
-/*/{Protheus.doc} TranspMod
-Função que monta o Model com os dados da pesquisa de transportadoras
+/*/{Protheus.doc} CondPagMod
+Função que monta o Model com os dados da pesquisa de condições de pagamneto
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param FIELDS_SE4, Caracter, Campos a serem retornados da Tabela SE4 – Cond Pagamento
 @return Objeto, Objeto com o Modelo de Dados
@@ -648,7 +595,6 @@ Static Function CondPagMod( FIELDS_SE4 )
 
 	oModel:addGrid('SE4-CONDICAO_PAGTO','SM0-FILIAL',oStrSE4)
 	oModel:getModel('SE4-CONDICAO_PAGTO'):SetDescription('Lista de Condições de Pagamento')
-	oModel:getModel('SE4-CONDICAO_PAGTO'):SetOptional(.T.)
 	oModel:SetRelation('SE4-CONDICAO_PAGTO', { { 'E4_FILIAL', 'M0_CODFIL' } }, SE4->(IndexKey(1)) )
 
 Return oModel
@@ -656,7 +602,7 @@ Return oModel
 /*/{Protheus.doc} CONSULTA_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do Pedido de Venda pesquisado.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -668,11 +614,6 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 	Local oModel     := Nil
 	Local oSetEnv    := SetEnv():New()
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-	Default ORDER_NUMBER  := ''
-	Default TYPE_REQUEST := 1
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
@@ -723,7 +664,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} PedVendMod
 Função que monta o Model com os dados da pesquisa de Pedido de Venda
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @return Objeto, Objeto com o Modelo de Dados
 /*/
@@ -745,20 +686,18 @@ Static Function PedVendMod()
 
 	oModel:addGrid('SC6-ITENS','SC5-CABECALHO',oStrSC6)
 	oModel:getModel('SC6-ITENS'):SetDescription('Itens do Pedido de Venda')
-	oModel:getModel('SC6-ITENS'):SetOptional(.T.)
 	oModel:SetRelation('SC6-ITENS', { { 'C6_FILIAL', 'C5_FILIAL' }, { 'C6_NUM', 'C5_NUM' } }, SC6->(IndexKey(1)) )
 
 	oModel:addGrid('SC9-LIBERACOES','SC6-ITENS',oStrSC9)
 	oModel:getModel('SC9-LIBERACOES'):SetDescription('Liberações dos Itens do Pedido de Venda')
-	oModel:getModel('SC9-LIBERACOES'):SetOptional(.T.)
-	oModel:SetRelation('SC9-LIBERACOES', { { 'C9_FILIAL', 'C6_FILIAL' }, { 'C9_PEDIDO', 'C6_NUM' }, { 'C9_SEQUEN', 'C6_ITEM' } }, SC9->(IndexKey(1)) )
+	oModel:SetRelation('SC9-LIBERACOES', { { 'C9_FILIAL', 'C6_FILIAL' }, { 'C9_PEDIDO', 'C6_NUM' }, { 'C9_ITEM', 'C6_ITEM' } }, SC9->(IndexKey(1)) )
 
 Return oModel
 
 /*/{Protheus.doc} INCLUI_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -777,9 +716,6 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 	Local nX      := 0
 	Local oSetEnv := SetEnv():New()
 	Local aErro   := {}
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
 
 	Private	lMsErroAuto    := .F.
 	Private	lMsHelpAuto    := .T.
@@ -871,6 +807,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 
 		End If
 
+		aAdd( aItem, { 'C6_ITEM'   , StrZero( nX, GetSx3Cache( 'C6_ITEM', 'X3_TAMANHO' ) ), Nil } )
 		aAdd( aItem, { 'C6_PRODUTO', ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO, Nil } )
 
 		//Valida Quantidade
@@ -886,7 +823,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 		aAdd( aItem, { 'C6_QTDVEN' , ::C6_ITENS:PRODUTOS[nX]:C6_QTDVEN , Nil } )
 
 		//Valida Preço de Venda negativo
-		If ValType( ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN ) # 'U' .And. ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN < 0
+		If ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN < 0
 
 			::RESULT_METHOD:RESULT  := 8
 			::RESULT_METHOD:MESSAGE := 'Preço do produto menor que zero ' + ::C6_ITENS:PRODUTOS[nX]:C6_PRODUTO
@@ -896,7 +833,7 @@ WSMETHOD INCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, C5_CLIENTE, C5_LOJACLI, 
 		End If
 
 		//Valida Preço de Venda se não foi enviado no cadastro do produto e na tabela de preço
-		If ValType( ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN ) # 'U' .And. ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN > 0
+		If ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN > 0
 
 			aAdd( aItem, { 'C6_PRCVEN' , ::C6_ITENS:PRODUTOS[nX]:C6_PRCVEN , Nil } )
 
@@ -1010,7 +947,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} EXCLUI_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -1025,9 +962,6 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 	Local nX      := 0
 	Local oSetEnv := SetEnv():New()
 	Local aErro   := {}
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
 
 	Private	lMsErroAuto    := .F.
 	Private	lMsHelpAuto    := .T.
@@ -1117,7 +1051,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} LIBERA_PEDIDO_VENDA
 Método do Web Service que retorna o XML com os dados do(s) transportadoras(s) pesquisadas.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -1135,9 +1069,6 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 	Local aErro    := {}
 	Local lAtuCred := .F.
 	Local lAtuEst  := .F.
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
 
 	Private	lMsErroAuto    := .F.
 	Private	lMsHelpAuto    := .T.
@@ -1268,7 +1199,7 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} CONSULTA_PEDIDO_COMPRA
 Método do Web Service que retorna o XML com os dados do Pedido de Compra pesquisado.
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -1281,11 +1212,6 @@ WSMETHOD CONSULTA_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_RE
 	Local oModel  := Nil
 	Local oSetEnv := SetEnv():New()
 	Local lFound  := .F.
-
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-	Default ORDER_NUMBER  := ''
-	Default TYPE_REQUEST := 1
 
 	If ! oSetEnv:Set( EMPRESA, FILIAL )
 
@@ -1336,20 +1262,18 @@ Return oSetEnv:Clear()
 /*/{Protheus.doc} PedCompMod
 Função que monta o Model com os dados da pesquisa de Pedido de Compra
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @return Objeto, Objeto com o Modelo de Dados
 /*/
 Static Function PedCompMod()
 
 	Local oModel    := MPFormModel():New('PEDIDO_COMPRA')
-	Local oStrSC7Cb := FWFormStruct(1,'SC7')
-	Local oStrSC7It := FWFormStruct(1,'SC7')
+	Local oStrSC7Cb := StructSC7( { 'C7_FILIAL', 'C7_NUM' }, 'Cabeçalho de Pedido de Compras' )
+	Local oStrSC7It := StructSC7( { 'C7_FILIAL', 'C7_NUM', 'C7_ITEM' }, 'Itens de Pedido de Compras' )
 	Local oStrSD1   := FWFormStruct(1,'SD1')
 
-	oStrSC7Cb:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
-	oStrSC7It:SetProperty( '*' , MODEL_FIELD_INIT, Nil )
-	oStrSD1:SetProperty  ( '*' , MODEL_FIELD_INIT, Nil )
+	oStrSC7Cb:RemoveField('C7_ITEM')
 
 	oModel:SetDescription('Pedido de Compra')
 
@@ -1359,20 +1283,58 @@ Static Function PedCompMod()
 
 	oModel:addGrid('SC7-ITENS','SC7-CABECALHO',oStrSC7It)
 	oModel:getModel('SC7-ITENS'):SetDescription('Itens do Pedido de Compra')
-	oModel:getModel('SC7-ITENS'):SetOptional(.T.)
 	oModel:SetRelation('SC7-ITENS', { { 'C7_FILIAL', 'C7_FILIAL' }, { 'C7_NUM', 'C7_NUM' } }, SC7->(IndexKey(1)) )
 
 	oModel:addGrid('SD1-ITENS_NOTA_FISCAL','SC7-ITENS',oStrSD1)
 	oModel:getModel('SD1-ITENS_NOTA_FISCAL'):SetDescription('Itens da Nota Fiscal de Entrada')
-	oModel:getModel('SD1-ITENS_NOTA_FISCAL'):SetOptional(.T.)
 	oModel:SetRelation('SD1-ITENS_NOTA_FISCAL', { { 'D1_FILIAL', 'C7_FILIAL' }, { 'D1_PEDIDO', 'C7_NUM' }, { 'D1_ITEMPC', 'C7_ITEM' } }, SD1->(IndexKey(1)) )
 
 Return oModel
 
+/*/{Protheus.doc} StructSC7
+Função que gera a estrutura de campos da tabela SC7 com base no dicionário de dados
+@author Elton Teodoro Alves
+@since 05/07/2018
+@param aKey, Array, Array com chave da Tabela
+@param cDesc, Caracter, Descrição da Tabela
+@version 12.1.017
+@return Objeto, Objeto com a estrutura de campos da tabela SC7
+/*/
+Static Function StructSC7( aKey, cDesc )
+
+	Local oRet     := FwFormModelStruct():New()
+	Local aArea    := GetArea()
+	Local aAreaSX3 := SX3->( GetArea() )
+
+	oRet:AddTable( 'SC7', aKey, cDesc )
+
+	SX3->( DbSetOrder( 1 ) )
+	SX3->( DbSeek( 'SC7' ) )
+
+	Do While ! Eof() .And. SX3->X3_ARQUIVO == 'SC7'
+
+		oRet:AddField(;
+		AllTrim( X3Titulo()    ),;
+		AllTrim( X3Descric()   ),;
+		AllTrim( SX3->X3_CAMPO ),;
+		SX3->X3_TIPO            ,;
+		SX3->X3_TAMANHO         ,;
+		SX3->X3_DECIMAL         ,,,,,,,,;
+		SX3->X3_CONTEXT == 'V' )
+
+		SX3->( DbSkip() )
+
+	End Do
+
+	SX3->( RestArea( aAreaSX3 ) )
+	RestArea( aAreaSX3 )
+
+Return oRet
+
 /*/{Protheus.doc} INCLUI_PEDIDO_COMPRA
 Método de Inclusão de Pedido de Compra
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param EMPRESA, Caracter, Empresa da Pesquisa
 @param FILIAL, Caracter, Filial da Pesquisa
@@ -1392,9 +1354,6 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 	Local oSetEnv := SetEnv():New()
 	Local aErro   := {}
 
-	Default EMPRESA       := ''
-	Default FILIAL        := ''
-
 	Private	lMsErroAuto    := .F.
 	Private	lMsHelpAuto    := .T.
 	Private	lAutoErrNoFile := .T.
@@ -1408,8 +1367,8 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 
 	End If
 
-	aAdd( aCabec, { 'C7_EMISSAO', dDataBase     , Nil } )
-	aAdd( aCabec, { 'C7_CONTATO', ''            , Nil } )
+	aAdd( aCabec, { 'C7_EMISSAO', dDataBase, Nil } )
+	aAdd( aCabec, { 'C7_CONTATO', ''       , Nil } )
 
 	// Valida Código e Loja do Fornecedor
 	DbSelectArea( 'SA2' )
@@ -1497,7 +1456,7 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 		aAdd( aItem, { 'C7_QUANT' , ::C7_ITENS:PRODUTOS[nX]:C7_QUANT, Nil } )
 
 		//Valida Preço de Compra negativo
-		If ValType( ::C7_ITENS:PRODUTOS[nX]:C7_PRECO ) # 'U' .And. ::C7_ITENS:PRODUTOS[nX]:C7_PRECO <= 0
+		If ::C7_ITENS:PRODUTOS[nX]:C7_PRECO <= 0
 
 			::RESULT_METHOD:RESULT  := 8
 			::RESULT_METHOD:MESSAGE := 'Preço do produto menor ou igual a zero ' + ::C7_ITENS:PRODUTOS[nX]:C7_PRODUTO
@@ -1546,10 +1505,112 @@ WSMETHOD INCLUI_PEDIDO_COMPRA  WSRECEIVE EMPRESA, FILIAL, C7_FORNECE, C7_LOJA, C
 
 Return oSetEnv:Clear()
 
+/*/{Protheus.doc} EXCLUI_PEDIDO_COMPRA
+Método do Web Service que exclui o Pedido de Compra
+@author Elton Teodoro Alves
+@since 05/07/2018
+@version 12.1.017
+@param EMPRESA, Caracter, Empresa do Pedido de Compra
+@param FILIAL, Caracter, Filial do Pedidod de Compra
+@param ORDER_NUMBER, Caracter, Número do Pedido de Compra para exclusão
+@return Objeto, Objeto com dados do retorno da operação
+/*/
+WSMETHOD EXCLUI_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESULT_METHOD WSSERVICE INDTA001
+
+	Local aCabec  := {}
+	Local aItens  := {}
+	Local aItem   := {}
+	Local nX      := 0
+	Local oSetEnv := SetEnv():New()
+	Local aErro   := {}
+
+	Private	lMsErroAuto    := .F.
+	Private	lMsHelpAuto    := .T.
+	Private	lAutoErrNoFile := .T.
+
+	If ! oSetEnv:Set( EMPRESA, FILIAL )
+
+		::RESULT_METHOD:RESULT      := 0
+		::RESULT_METHOD:MESSAGE     := oSetEnv:ErrorMessage
+
+		Return .T.
+
+	End If
+
+	DbSelectArea( 'SC7' )
+	DbSetOrder( 1 )
+	DbSeek( xFilial( 'SC7' ) + ORDER_NUMBER )
+
+	//Se Pedido existe percorre campos e preenche os array para o execauto
+	If ! Found()
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
+
+		Return oSetEnv:Clear()
+
+	Else
+
+		//Popula aCabec com dados dos cabeçalhos do Pedido de Compra
+		For nX := 1 To FCount()
+
+			aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
+
+		Next nX
+
+		// Popula aItens com os dados dos itens do pedido de Compra
+		Do While ! Eof() .And. SC7->( C7_FILIAL + C7_NUM == xFilial( 'SC7' ) + ORDER_NUMBER )
+
+			For nX := 1 To FCount()
+
+				aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
+
+			Next nX
+
+			aAdd( aItem, { 'C7_REC_WT', Recno(), Nil } )
+
+			aAdd( aItens, aClone( aItem ) )
+			aSize( aItem, 0 )
+
+			DbSkip()
+
+		End Do
+
+		BEGIN TRANSACTION
+
+			MSExecAuto( { | W, X, Y, Z | MATA120( W, X, Y, Z ) }, 1, aCabec, aItens, 5 )
+
+			If lMsErroAuto
+
+				::RESULT_METHOD:RESULT  := 2
+
+				aErro := aClone( GetAutoGRLog() )
+
+				For nX := 1 To Len(aErro)
+
+					::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+
+				Next nX
+
+				DisarmTransaction()
+
+				Return oSetEnv:Clear()
+
+			End If
+
+		END TRANSACTION
+
+	End If
+
+	::RESULT_METHOD:RESULT  := 1
+	::RESULT_METHOD:MESSAGE := 'Pedido Excluído'
+
+Return oSetEnv:Clear()
+
 /*/{Protheus.doc} GetSM0Str
 Função que monta a estrutura de campos do model da tabela SM0
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param cAlias, Nome do Alias correspondente
 @return Objeto, Objeto com a estrutura o Modelo de Dados
@@ -1567,7 +1628,7 @@ return oStruct
 /*/{Protheus.doc} LoadSM0
 Função que faz o load do modelo de dados da Filial
 @author Elton Teodoro Alves
-@since 11/06/2018
+@since 05/07/2018
 @version 12.1.017
 @Param oFieldModel, Objeto, Objeto do Modelo de dados
 @Param lCopy, Booleano, Indica se é uma cópia
@@ -1586,7 +1647,7 @@ Return aLoad
 /*/{Protheus.doc} SetEnv
 Classe que controla a abertura do Ambiente
 @author Elton Teodoro Alves
-@since 21/06/2018
+@since 05/07/2018
 @version 12.1.017
 /*/
 Class SetEnv
@@ -1603,7 +1664,7 @@ End Class
 /*/{Protheus.doc} New
 Método Construtor da Classe
 @author Elton Teodoro Alves
-@since 21/06/2018
+@since 05/07/2018
 @version 12.1.017
 @return Objeto, Estância da Classe
 /*/
@@ -1616,7 +1677,7 @@ Return Self
 /*/{Protheus.doc} Set
 Método que seta o ambiente
 @author Elton Teodoro Alves
-@since 21/06/2018
+@since 05/07/2018
 @version 12.1.017
 @param cEmp, characters, Empresa do Ambiente
 @param cFil, characters, Filaial  do Ambiente
@@ -1649,7 +1710,7 @@ Return lRet
 /*/{Protheus.doc} Clear
 Método que libera o ambiente
 @author Elton Teodoro Alves
-@since 21/06/2018
+@since 05/07/2018
 @version 12.1.017
 /*/
 Method Clear() Class SetEnv
