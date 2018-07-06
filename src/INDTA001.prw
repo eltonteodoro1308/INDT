@@ -628,9 +628,27 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 	oModel:SetOperation( MODEL_OPERATION_VIEW )
 
+	If Empty( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Número do Pedido não informado.'
+
+		Return oSetEnv:Clear()
+
+	End If
+
 	DbSelectArea( 'SC5' )
 	DbSetOrder( 1 )
 	DbSeek( xFilial('SC5') + ORDER_NUMBER )
+
+	If AllTrim( SC5->C5_NUM ) # AllTrim( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
+
+		Return oSetEnv:Clear()
+
+	End If
 
 	oModel:Activate()
 
@@ -977,6 +995,15 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 
 	End If
 
+	If Empty( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Número do Pedido não informado.'
+
+		Return oSetEnv:Clear()
+
+	End If
+
 	DbSelectArea( 'SC5' )
 	DbSetOrder( 1 )
 	DbSeek( xFilial( 'SC5' ) + ORDER_NUMBER )
@@ -991,56 +1018,67 @@ WSMETHOD EXCLUI_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RESU
 
 	Else
 
-		//Popula aCabec com dados dos cabeçalhos do Pedido de Venda
-		For nX := 1 To FCount()
+		If AllTrim( SC5->C5_NUM ) # AllTrim( ORDER_NUMBER )
 
-			aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
+			::RESULT_METHOD:RESULT  := 2
+			::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
 
-		Next nX
+			Return oSetEnv:Clear()
 
-		DbSelectArea( 'SC6' )
-		DbSetOrder( 1 )
-		DbSeek( xFilial( 'SC6' ) + ORDER_NUMBER )
+		Else
 
-		// Popula aItens com os dados dos itens do pedido de venda
-		Do While ! Eof() .And. SC6->( C6_FILIAL + C6_NUM == xFilial( 'SC6' ) + ORDER_NUMBER )
-
+			//Popula aCabec com dados dos cabeçalhos do Pedido de Venda
 			For nX := 1 To FCount()
 
-				aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
+				aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
 
 			Next nX
 
-			aAdd( aItens, aClone( aItem ) )
-			aSize( aItem, 0 )
+			DbSelectArea( 'SC6' )
+			DbSetOrder( 1 )
+			DbSeek( xFilial( 'SC6' ) + ORDER_NUMBER )
 
-			DbSkip()
+			// Popula aItens com os dados dos itens do pedido de venda
+			Do While ! Eof() .And. SC6->( C6_FILIAL + C6_NUM == xFilial( 'SC6' ) + ORDER_NUMBER )
 
-		End Do
+				For nX := 1 To FCount()
 
-		BEGIN TRANSACTION
-
-			MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 5 )
-
-			If lMsErroAuto
-
-				::RESULT_METHOD:RESULT  := 2
-
-				aErro := aClone( GetAutoGRLog() )
-
-				For nX := 1 To Len(aErro)
-
-					::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+					aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
 
 				Next nX
 
-				DisarmTransaction()
+				aAdd( aItens, aClone( aItem ) )
+				aSize( aItem, 0 )
 
-				Return oSetEnv:Clear()
+				DbSkip()
 
-			End If
+			End Do
 
-		END TRANSACTION
+			BEGIN TRANSACTION
+
+				MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 5 )
+
+				If lMsErroAuto
+
+					::RESULT_METHOD:RESULT  := 2
+
+					aErro := aClone( GetAutoGRLog() )
+
+					For nX := 1 To Len(aErro)
+
+						::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+
+					Next nX
+
+					DisarmTransaction()
+
+					Return oSetEnv:Clear()
+
+				End If
+
+			END TRANSACTION
+
+		End If
 
 	End If
 
@@ -1084,6 +1122,16 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 
 	End If
 
+
+	If Empty( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Número do Pedido não informado.'
+
+		Return oSetEnv:Clear()
+
+	End If
+
 	DbSelectArea( 'SC5' )
 	DbSetOrder( 1 )
 	DbSeek( xFilial( 'SC5' ) + ORDER_NUMBER)
@@ -1095,98 +1143,109 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 
 	Else
 
-		// Libera Pedido de Venda
-		If 'ORDER' $ RELEASE_TYPE .And. Empty( SC5->C5_LIBEROK )
+		If AllTrim( SC5->C5_NUM ) # AllTrim( ORDER_NUMBER )
 
-			//Popula aCabec com dados dos cabeçalhos do Pedido de Venda
-			For nX := 1 To FCount()
+			::RESULT_METHOD:RESULT  := 2
+			::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
 
-				aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
+			Return oSetEnv:Clear()
 
-			Next nX
+		Else
 
-			DbSelectArea( 'SC6' )
-			DbSetOrder( 1 )
-			DbSeek( xFilial( 'SC6' ) + ORDER_NUMBER )
+			// Libera Pedido de Venda
+			If 'ORDER' $ RELEASE_TYPE .And. Empty( SC5->C5_LIBEROK )
 
-			// Popula aItens com os dados dos itens do pedido de venda
-			Do While ! Eof() .And. SC6->( C6_FILIAL + C6_NUM == xFilial( 'SC6' ) + ORDER_NUMBER )
-
+				//Popula aCabec com dados dos cabeçalhos do Pedido de Venda
 				For nX := 1 To FCount()
 
-					If FieldName( nX ) == 'C6_QTDLIB'
-
-						aAdd( aItem, { 'C6_QTDLIB', SC6->C6_QTDVEN, Nil } )
-
-					ElseIf ! AllTrim( FieldName( nX ) ) $;
-					'/C6_SEGUM/C6_IPIDEV/C6_BLQ/C6_LOCALIZ/C6_CODFAB/C6_LOJAFA/C6_TPCONTR/C6_PEDCOM/C6_ALMTERC/C6_VDMOST/C6_CNATREC/'
-
-						aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
-
-					End If
+					aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
 
 				Next nX
 
-				aAdd( aItens, aClone( aItem ) )
-				aSize( aItem, 0 )
+				DbSelectArea( 'SC6' )
+				DbSetOrder( 1 )
+				DbSeek( xFilial( 'SC6' ) + ORDER_NUMBER )
 
-				DbSkip()
+				// Popula aItens com os dados dos itens do pedido de venda
+				Do While ! Eof() .And. SC6->( C6_FILIAL + C6_NUM == xFilial( 'SC6' ) + ORDER_NUMBER )
 
-			End Do
+					For nX := 1 To FCount()
 
-			BEGIN TRANSACTION
+						If FieldName( nX ) == 'C6_QTDLIB'
 
-				MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 4 )
+							aAdd( aItem, { 'C6_QTDLIB', SC6->C6_QTDVEN, Nil } )
 
-				If lMsErroAuto
+						ElseIf ! AllTrim( FieldName( nX ) ) $;
+						'/C6_SEGUM/C6_IPIDEV/C6_BLQ/C6_LOCALIZ/C6_CODFAB/C6_LOJAFA/C6_TPCONTR/C6_PEDCOM/C6_ALMTERC/C6_VDMOST/C6_CNATREC/'
 
-					::RESULT_METHOD:RESULT  := 2
+							aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
 
-					aErro := aClone( GetAutoGRLog() )
-
-					For nX := 1 To Len(aErro)
-
-						::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+						End If
 
 					Next nX
 
-					DisarmTransaction()
+					aAdd( aItens, aClone( aItem ) )
+					aSize( aItem, 0 )
 
-					Return oSetEnv:Clear()
+					DbSkip()
 
-				End If
+				End Do
 
-			END TRANSACTION
+				BEGIN TRANSACTION
 
-		End If
+					MSExecAuto( { | X, Y, Z | MATA410( X, Y, Z ) }, aCabec, aItens, 4 )
 
-		If ( 'CREDIT' $ RELEASE_TYPE .Or. 'STOCK' $ RELEASE_TYPE ) .And. SC5->C5_LIBEROK == 'S'
+					If lMsErroAuto
 
-			lAtuCred := 'CREDIT' $ RELEASE_TYPE
-			lAtuEst  := 'STOCK'  $ RELEASE_TYPE
+						::RESULT_METHOD:RESULT  := 2
 
-			DbSelectArea( 'SC9' )
-			DbSetOrder( 1 )
-			DbSeek( xFilial( 'SC9' ) + ORDER_NUMBER )
+						aErro := aClone( GetAutoGRLog() )
 
-			Do While !Eof() .And. SC9->( C9_FILIAL + C9_PEDIDO == xFilial( 'SC9' ) + ORDER_NUMBER )
+						For nX := 1 To Len(aErro)
 
-				If ! Empty (SC9->C9_BLCRED) .And. ! lAtuCred .And. lAtuEst
+							::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
 
-					::RESULT_METHOD:RESULT  := 2
-					::RESULT_METHOD:MESSAGE := 'Deve-se liberar o crédito antes de liberar o estoque.'
+						Next nX
 
-					Return oSetEnv:Clear()
+						DisarmTransaction()
 
-				Else
+						Return oSetEnv:Clear()
 
-					a450Grava( 1, lAtuCred, lAtuEst )
+					End If
 
-				End If
+				END TRANSACTION
 
-				DbSkip()
+			End If
 
-			End Do
+			If ( 'CREDIT' $ RELEASE_TYPE .Or. 'STOCK' $ RELEASE_TYPE ) .And. SC5->C5_LIBEROK == 'S'
+
+				lAtuCred := 'CREDIT' $ RELEASE_TYPE
+				lAtuEst  := 'STOCK'  $ RELEASE_TYPE
+
+				DbSelectArea( 'SC9' )
+				DbSetOrder( 1 )
+				DbSeek( xFilial( 'SC9' ) + ORDER_NUMBER )
+
+				Do While !Eof() .And. SC9->( C9_FILIAL + C9_PEDIDO == xFilial( 'SC9' ) + ORDER_NUMBER )
+
+					If ! Empty (SC9->C9_BLCRED) .And. ! lAtuCred .And. lAtuEst
+
+						::RESULT_METHOD:RESULT  := 2
+						::RESULT_METHOD:MESSAGE := 'Deve-se liberar o crédito antes de liberar o estoque.'
+
+						Return oSetEnv:Clear()
+
+					Else
+
+						a450Grava( 1, lAtuCred, lAtuEst )
+
+					End If
+
+					DbSkip()
+
+				End Do
+
+			End If
 
 		End If
 
@@ -1227,9 +1286,28 @@ WSMETHOD CONSULTA_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_RE
 
 	oModel:SetOperation( MODEL_OPERATION_VIEW )
 
+
+	If Empty( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Número do Pedido não informado.'
+
+		Return oSetEnv:Clear()
+
+	End If
+
 	DbSelectArea( 'SC7' )
 	DbSetOrder( 1 )
 	lFound := DbSeek( xFilial('SC7') + ORDER_NUMBER )
+
+	If AllTrim( SC7->C7_NUM ) # AllTrim( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
+
+		Return oSetEnv:Clear()
+
+	End If
 
 	oModel:Activate()
 
@@ -1539,6 +1617,15 @@ WSMETHOD EXCLUI_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RES
 
 	End If
 
+	If Empty( ORDER_NUMBER )
+
+		::RESULT_METHOD:RESULT  := 2
+		::RESULT_METHOD:MESSAGE += 'Número do Pedido não informado.'
+
+		Return oSetEnv:Clear()
+
+	End If
+
 	DbSelectArea( 'SC7' )
 	DbSetOrder( 1 )
 	DbSeek( xFilial( 'SC7' ) + ORDER_NUMBER )
@@ -1553,54 +1640,65 @@ WSMETHOD EXCLUI_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER WSSEND RES
 
 	Else
 
-		//Popula aCabec com dados dos cabeçalhos do Pedido de Compra
-		For nX := 1 To FCount()
+		If AllTrim( SC7->C7_NUM ) # AllTrim( ORDER_NUMBER )
 
-			aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
+			::RESULT_METHOD:RESULT  := 2
+			::RESULT_METHOD:MESSAGE += 'Pedido ' + ORDER_NUMBER + ' não Localizado.'
 
-		Next nX
+			Return oSetEnv:Clear()
 
-		// Popula aItens com os dados dos itens do pedido de Compra
-		Do While ! Eof() .And. SC7->( C7_FILIAL + C7_NUM == xFilial( 'SC7' ) + ORDER_NUMBER )
+		Else
 
+			//Popula aCabec com dados dos cabeçalhos do Pedido de Compra
 			For nX := 1 To FCount()
 
-				aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
+				aAdd( aCabec, { FieldName( nX ), FieldGet( nX ), Nil } )
 
 			Next nX
 
-			aAdd( aItem, { 'C7_REC_WT', Recno(), Nil } )
+			// Popula aItens com os dados dos itens do pedido de Compra
+			Do While ! Eof() .And. SC7->( C7_FILIAL + C7_NUM == xFilial( 'SC7' ) + ORDER_NUMBER )
 
-			aAdd( aItens, aClone( aItem ) )
-			aSize( aItem, 0 )
+				For nX := 1 To FCount()
 
-			DbSkip()
-
-		End Do
-
-		BEGIN TRANSACTION
-
-			MSExecAuto( { | W, X, Y, Z | MATA120( W, X, Y, Z ) }, 1, aCabec, aItens, 5 )
-
-			If lMsErroAuto
-
-				::RESULT_METHOD:RESULT  := 2
-
-				aErro := aClone( GetAutoGRLog() )
-
-				For nX := 1 To Len(aErro)
-
-					::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+					aAdd( aItem, { FieldName( nX ), FieldGet( nX ), Nil } )
 
 				Next nX
 
-				DisarmTransaction()
+				aAdd( aItem, { 'C7_REC_WT', Recno(), Nil } )
 
-				Return oSetEnv:Clear()
+				aAdd( aItens, aClone( aItem ) )
+				aSize( aItem, 0 )
 
-			End If
+				DbSkip()
 
-		END TRANSACTION
+			End Do
+
+			BEGIN TRANSACTION
+
+				MSExecAuto( { | W, X, Y, Z | MATA120( W, X, Y, Z ) }, 1, aCabec, aItens, 5 )
+
+				If lMsErroAuto
+
+					::RESULT_METHOD:RESULT  := 2
+
+					aErro := aClone( GetAutoGRLog() )
+
+					For nX := 1 To Len(aErro)
+
+						::RESULT_METHOD:MESSAGE += _NoTags( aErro[ nX ] ) + Chr(13) + Chr(10)
+
+					Next nX
+
+					DisarmTransaction()
+
+					Return oSetEnv:Clear()
+
+				End If
+
+			END TRANSACTION
+
+		End If
 
 	End If
 
