@@ -634,7 +634,14 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 
 	oModel:Activate()
 
-	If TYPE_REQUEST == 1
+	If ! Empty( TYPE_REQUEST ) .And. TYPE_REQUEST # 1
+
+
+		::RESULT_METHOD:RESULT  := 3
+		::RESULT_METHOD:MESSAGE := 'Schema XSD do XML do Modelo de Dados do Pedido de Vendas'
+		::RESULT_METHOD:ORDER_SCHEMA   := Encode64( oModel:GetXMLSchema() )
+
+	Else
 
 		If ! Empty( ORDER_NUMBER ) .And. Found()
 
@@ -648,12 +655,6 @@ WSMETHOD CONSULTA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_REQ
 			::RESULT_METHOD:MESSAGE := 'Pedido de Venda não Localizado.'
 
 		End If
-
-	Else
-
-		::RESULT_METHOD:RESULT  := 3
-		::RESULT_METHOD:MESSAGE := 'Schema XSD do XML do Modelo de Dados do Pedido de Vendas'
-		::RESULT_METHOD:ORDER_SCHEMA   := Encode64( oModel:GetXMLSchema() )
 
 	End If
 
@@ -1232,7 +1233,14 @@ WSMETHOD CONSULTA_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_RE
 
 	oModel:Activate()
 
-	If TYPE_REQUEST == 1
+	If ! Empty( TYPE_REQUEST ) .And. TYPE_REQUEST == 1
+
+
+		::RESULT_METHOD:RESULT  := 3
+		::RESULT_METHOD:MESSAGE := 'Schema XSD do XML do Modelo de Dados do Pedido de Compras'
+		::RESULT_METHOD:ORDER_SCHEMA   := Encode64( oModel:GetXMLSchema() )
+
+	Else
 
 		If ! Empty( ORDER_NUMBER ) .And. lFound
 
@@ -1246,12 +1254,6 @@ WSMETHOD CONSULTA_PEDIDO_COMPRA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, TYPE_RE
 			::RESULT_METHOD:MESSAGE := 'Pedido de Compra não Localizado.'
 
 		End If
-
-	Else
-
-		::RESULT_METHOD:RESULT  := 3
-		::RESULT_METHOD:MESSAGE := 'Schema XSD do XML do Modelo de Dados do Pedido de Compras'
-		::RESULT_METHOD:ORDER_SCHEMA   := Encode64( oModel:GetXMLSchema() )
 
 	End If
 
