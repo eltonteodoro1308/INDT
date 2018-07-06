@@ -1226,7 +1226,7 @@ WSMETHOD LIBERA_PEDIDO_VENDA WSRECEIVE EMPRESA, FILIAL, ORDER_NUMBER, RELEASE_TY
 			If Empty( SC5->C5_LIBEROK ) .And. .Not. 'ORDER' $ RELEASE_TYPE
 
 				::RESULT_METHOD:RESULT  := 2
-				::RESULT_METHOD:MESSAGE := 'Deve-se liberar o pedido antes de liberar o crédito.'
+				::RESULT_METHOD:MESSAGE := 'Deve-se liberar o pedido antes de liberar o crédito e o estoque.'
 
 				Return oSetEnv:Clear()
 
