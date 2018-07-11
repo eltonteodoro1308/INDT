@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="84fddfe6-3bdc-46a8-8aec-4e67d756a451" activeEnvironment="Default" name="INDTA001" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="0744e2c6-6c2c-4b19-b405-9ab7c27ed878" wsaVersion="NONE" name="INDTA001SOAP" type="wsdl" bindingName="{http://spon4944:15901/}INDTA001SOAP" soapVersion="1_1" anonymous="optional" definition="http://spon4944:15901/ws/INDTA001.apw?WSDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://spon4944:15901/ws/INDTA001.apw?WSDL"><con:part><con:url>http://spon4944:15901/ws/INDTA001.apw?WSDL</con:url><con:content><![CDATA[<!--Generated 20180703 15:31:12 by ADVPL WSDL Server 1.110216 / Protheus 7.00.131227A-20180425 NG-->
+<con:soapui-project id="a13e1fb3-64c0-4a8a-97b4-14a5c0bcad8d" activeEnvironment="Default" name="INDTA001" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="495682a9-0feb-471f-a647-5ab026b93d8b" wsaVersion="NONE" name="INDTA001SOAP" type="wsdl" bindingName="{http://spon4944:15901/}INDTA001SOAP" soapVersion="1_1" anonymous="optional" definition="http://spon4944:15901/ws/INDTA001.apw?WSDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://spon4944:15901/ws/INDTA001.apw?WSDL"><con:part><con:url>http://spon4944:15901/ws/INDTA001.apw?WSDL</con:url><con:content><![CDATA[<!--Generated 20180705 17:59:38 by ADVPL WSDL Server 1.110216 / Protheus 7.00.131227A-20180425 NG-->
 <definitions targetNamespace="http://spon4944:15901/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://spon4944:15901/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://spon4944:15901/">
+      <s:element name="CONSULTA_PEDIDO_COMPRA">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="TYPE_REQUEST" type="s:integer"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CONSULTA_PEDIDO_COMPRARESPONSE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CONSULTA_PEDIDO_COMPRARESULT" type="s0:RESULT"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="CONSULTA_PEDIDO_VENDA">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
             <s:element minOccurs="1" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="TYPE_REQUEST" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="TYPE_REQUEST" type="s:integer"/>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -20,11 +37,27 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="EXCLUI_PEDIDO_COMPRA">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EXCLUI_PEDIDO_COMPRARESPONSE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="EXCLUI_PEDIDO_COMPRARESULT" type="s0:RESULT"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="EXCLUI_PEDIDO_VENDA">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
             <s:element minOccurs="1" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
           </s:sequence>
         </s:complexType>
@@ -36,14 +69,33 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="INCLUI_PEDIDO_COMPRA">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="C7_FORNECE" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="C7_LOJA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="C7_COND" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="C7_ITENS" type="s0:ITENS_COMPRA"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="INCLUI_PEDIDO_COMPRARESPONSE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="INCLUI_PEDIDO_COMPRARESULT" type="s0:RESULT"/>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="INCLUI_PEDIDO_VENDA">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
             <s:element minOccurs="1" maxOccurs="1" name="C5_CLIENTE" type="s:string"/>
             <s:element minOccurs="1" maxOccurs="1" name="C5_LOJACLI" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="C5_CONDPAG" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="C5_CONDPAG" type="s:string"/>
             <s:element minOccurs="1" maxOccurs="1" name="C6_ITENS" type="s0:ITENS_VENDA"/>
           </s:sequence>
         </s:complexType>
@@ -58,10 +110,10 @@
       <s:element name="LIBERA_PEDIDO_VENDA">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
             <s:element minOccurs="1" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="RELEASE_TYPE" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="RELEASE_TYPE" type="s:string"/>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -75,15 +127,15 @@
       <s:element name="PESQUISA_CLIENTE">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_SA1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_DA0" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_DA1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_SA1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_DA1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="SEND_DA0" type="s:integer"/>
-            <s:element minOccurs="0" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_SA1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_DA0" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_DA1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_SA1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_DA1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="SEND_DA0" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -97,11 +149,11 @@
       <s:element name="PESQUISA_CONDICAO_PAGTO">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_SE4" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_SE4" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_SE4" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_SE4" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -115,17 +167,17 @@
       <s:element name="PESQUISA_PRODUTO">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_SB1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_SB2" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_SG1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_SB1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_SB2" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_SG1" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="SEND_SB2" type="s:integer"/>
-            <s:element minOccurs="0" maxOccurs="1" name="SEND_SG1" type="s:integer"/>
-            <s:element minOccurs="0" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_SB1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_SB2" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_SG1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_SB1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_SB2" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_SG1" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="SEND_SB2" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="SEND_SG1" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -139,11 +191,11 @@
       <s:element name="PESQUISA_TRANSPORTADORA">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="EMPRESA" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FILIAL" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="FIELDS_SA4" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="WHERE_SA4" type="s:string"/>
-            <s:element minOccurs="0" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
+            <s:element minOccurs="1" maxOccurs="1" name="EMPRESA" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FILIAL" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="FIELDS_SA4" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="WHERE_SA4" type="s:string"/>
+            <s:element minOccurs="1" maxOccurs="1" name="TYPE_RESPONSE" type="s:integer"/>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -159,21 +211,33 @@
           <s:element minOccurs="1" maxOccurs="1" name="PRODUTOS" type="s0:ARRAYOFDADOS_ITEM_VENDA"/>
         </s:sequence>
       </s:complexType>
+      <s:complexType name="ITENS_COMPRA">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PRODUTOS" type="s0:ARRAYOFDADOS_ITEM_COMPRA"/>
+        </s:sequence>
+      </s:complexType>
       <s:complexType name="RESULT">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="MESSAGE" type="s:string"/>
-          <s:element minOccurs="0" maxOccurs="1" name="ORDER_DATA" type="s:string"/>
-          <s:element minOccurs="0" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
-          <s:element minOccurs="0" maxOccurs="1" name="ORDER_SCHEMA" type="s:string"/>
+          <s:element minOccurs="1" maxOccurs="1" name="MESSAGE" type="s:string"/>
+          <s:element minOccurs="1" maxOccurs="1" name="ORDER_DATA" type="s:string"/>
+          <s:element minOccurs="1" maxOccurs="1" name="ORDER_NUMBER" type="s:string"/>
+          <s:element minOccurs="1" maxOccurs="1" name="ORDER_SCHEMA" type="s:string"/>
           <s:element minOccurs="1" maxOccurs="1" name="RESULT" type="s:integer"/>
         </s:sequence>
       </s:complexType>
       <s:complexType name="DADOS_ITEM_VENDA">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="C6_PRCVEN" type="s:float"/>
+          <s:element minOccurs="1" maxOccurs="1" name="C6_PRCVEN" type="s:float"/>
           <s:element minOccurs="1" maxOccurs="1" name="C6_PRODUTO" type="s:string"/>
           <s:element minOccurs="1" maxOccurs="1" name="C6_QTDVEN" type="s:float"/>
-          <s:element minOccurs="0" maxOccurs="1" name="C6_TES" type="s:string"/>
+          <s:element minOccurs="1" maxOccurs="1" name="C6_TES" type="s:string"/>
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DADOS_ITEM_COMPRA">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="C7_PRECO" type="s:float"/>
+          <s:element minOccurs="1" maxOccurs="1" name="C7_PRODUTO" type="s:string"/>
+          <s:element minOccurs="1" maxOccurs="1" name="C7_QUANT" type="s:float"/>
         </s:sequence>
       </s:complexType>
       <s:complexType name="ARRAYOFDADOS_ITEM_VENDA">
@@ -181,19 +245,42 @@
           <s:element minOccurs="0" maxOccurs="unbounded" name="DADOS_ITEM_VENDA" type="s0:DADOS_ITEM_VENDA"/>
         </s:sequence>
       </s:complexType>
+      <s:complexType name="ARRAYOFDADOS_ITEM_COMPRA">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DADOS_ITEM_COMPRA" type="s0:DADOS_ITEM_COMPRA"/>
+        </s:sequence>
+      </s:complexType>
     </s:schema>
   </types>
+  <message name="CONSULTA_PEDIDO_COMPRASOAPIN">
+    <part name="parameters" element="s0:CONSULTA_PEDIDO_COMPRA"/>
+  </message>
+  <message name="CONSULTA_PEDIDO_COMPRASOAPOUT">
+    <part name="parameters" element="s0:CONSULTA_PEDIDO_COMPRARESPONSE"/>
+  </message>
   <message name="CONSULTA_PEDIDO_VENDASOAPIN">
     <part name="parameters" element="s0:CONSULTA_PEDIDO_VENDA"/>
   </message>
   <message name="CONSULTA_PEDIDO_VENDASOAPOUT">
     <part name="parameters" element="s0:CONSULTA_PEDIDO_VENDARESPONSE"/>
   </message>
+  <message name="EXCLUI_PEDIDO_COMPRASOAPIN">
+    <part name="parameters" element="s0:EXCLUI_PEDIDO_COMPRA"/>
+  </message>
+  <message name="EXCLUI_PEDIDO_COMPRASOAPOUT">
+    <part name="parameters" element="s0:EXCLUI_PEDIDO_COMPRARESPONSE"/>
+  </message>
   <message name="EXCLUI_PEDIDO_VENDASOAPIN">
     <part name="parameters" element="s0:EXCLUI_PEDIDO_VENDA"/>
   </message>
   <message name="EXCLUI_PEDIDO_VENDASOAPOUT">
     <part name="parameters" element="s0:EXCLUI_PEDIDO_VENDARESPONSE"/>
+  </message>
+  <message name="INCLUI_PEDIDO_COMPRASOAPIN">
+    <part name="parameters" element="s0:INCLUI_PEDIDO_COMPRA"/>
+  </message>
+  <message name="INCLUI_PEDIDO_COMPRASOAPOUT">
+    <part name="parameters" element="s0:INCLUI_PEDIDO_COMPRARESPONSE"/>
   </message>
   <message name="INCLUI_PEDIDO_VENDASOAPIN">
     <part name="parameters" element="s0:INCLUI_PEDIDO_VENDA"/>
@@ -232,15 +319,30 @@
     <part name="parameters" element="s0:PESQUISA_TRANSPORTADORARESPONSE"/>
   </message>
   <portType name="INDTA001SOAP">
+    <operation name="CONSULTA_PEDIDO_COMPRA">
+      <documentation>MÉTODO DE CONSULTA DE PEDIDO DE COMPRA</documentation>
+      <input message="s0:CONSULTA_PEDIDO_COMPRASOAPIN"/>
+      <output message="s0:CONSULTA_PEDIDO_COMPRASOAPOUT"/>
+    </operation>
     <operation name="CONSULTA_PEDIDO_VENDA">
       <documentation>MÉTODO DE CONSULTA DE PEDIDO DE VENDA</documentation>
       <input message="s0:CONSULTA_PEDIDO_VENDASOAPIN"/>
       <output message="s0:CONSULTA_PEDIDO_VENDASOAPOUT"/>
     </operation>
+    <operation name="EXCLUI_PEDIDO_COMPRA">
+      <documentation>EXCLUSÃO DE PEDIDO DE VENDA</documentation>
+      <input message="s0:EXCLUI_PEDIDO_COMPRASOAPIN"/>
+      <output message="s0:EXCLUI_PEDIDO_COMPRASOAPOUT"/>
+    </operation>
     <operation name="EXCLUI_PEDIDO_VENDA">
       <documentation>EXCLUSÃO DE PEDIDO DE VENDA</documentation>
       <input message="s0:EXCLUI_PEDIDO_VENDASOAPIN"/>
       <output message="s0:EXCLUI_PEDIDO_VENDASOAPOUT"/>
+    </operation>
+    <operation name="INCLUI_PEDIDO_COMPRA">
+      <documentation>INCLUSÃO PEDIDO DE COMPRA</documentation>
+      <input message="s0:INCLUI_PEDIDO_COMPRASOAPIN"/>
+      <output message="s0:INCLUI_PEDIDO_COMPRASOAPOUT"/>
     </operation>
     <operation name="INCLUI_PEDIDO_VENDA">
       <documentation>INCLUSÃO PEDIDO DE VENDA</documentation>
@@ -275,6 +377,15 @@
   </portType>
   <binding name="INDTA001SOAP" type="s0:INDTA001SOAP">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="CONSULTA_PEDIDO_COMPRA">
+      <soap:operation soapAction="http://spon4944:15901/CONSULTA_PEDIDO_COMPRA" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
     <operation name="CONSULTA_PEDIDO_VENDA">
       <soap:operation soapAction="http://spon4944:15901/CONSULTA_PEDIDO_VENDA" style="document"/>
       <input>
@@ -284,8 +395,26 @@
         <soap:body use="literal"/>
       </output>
     </operation>
+    <operation name="EXCLUI_PEDIDO_COMPRA">
+      <soap:operation soapAction="http://spon4944:15901/EXCLUI_PEDIDO_COMPRA" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
     <operation name="EXCLUI_PEDIDO_VENDA">
       <soap:operation soapAction="http://spon4944:15901/EXCLUI_PEDIDO_VENDA" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="INCLUI_PEDIDO_COMPRA">
+      <soap:operation soapAction="http://spon4944:15901/INCLUI_PEDIDO_COMPRA" style="document"/>
       <input>
         <soap:body use="literal"/>
       </input>
@@ -354,161 +483,149 @@
       <soap:address location="http://spon4944:15901/ws/INDTA001.apw"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint></con:endpoints><con:operation id="6c1aac0d-e59a-452e-80aa-ad230fa53893" isOneWay="false" action="http://spon4944:15901/CONSULTA_PEDIDO_VENDA" name="CONSULTA_PEDIDO_VENDA" bindingOperationName="CONSULTA_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="11448b9d-b17e-42f2-a053-efe750bc1838" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint></con:endpoints><con:operation id="0a1323da-e7b3-4fe9-9d4e-16a56e149183" isOneWay="false" action="http://spon4944:15901/CONSULTA_PEDIDO_COMPRA" name="CONSULTA_PEDIDO_COMPRA" bindingOperationName="CONSULTA_PEDIDO_COMPRA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="90382ff1-5da4-40a7-b6e7-beb3c8c80dbe" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <spon:CONSULTA_PEDIDO_COMPRA>\r
+         <spon:EMPRESA></spon:EMPRESA>\r
+         <spon:FILIAL></spon:FILIAL>\r
+         <spon:ORDER_NUMBER>000001</spon:ORDER_NUMBER>\r
+         <spon:TYPE_REQUEST>1</spon:TYPE_REQUEST>\r
+      </spon:CONSULTA_PEDIDO_COMPRA>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/CONSULTA_PEDIDO_COMPRA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="50a2ed59-db9b-403f-9c31-1f3c685b7ebb" isOneWay="false" action="http://spon4944:15901/CONSULTA_PEDIDO_VENDA" name="CONSULTA_PEDIDO_VENDA" bindingOperationName="CONSULTA_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fcf15110-7d44-487c-b854-53067211d505" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:CONSULTA_PEDIDO_VENDA>\r
-         <!--Optional:-->\r
          <spon:EMPRESA>?</spon:EMPRESA>\r
-         <!--Optional:-->\r
          <spon:FILIAL>?</spon:FILIAL>\r
-         <spon:ORDER_NUMBER>?</spon:ORDER_NUMBER>\r
-         <!--Optional:-->\r
-         <spon:TYPE_REQUEST>?</spon:TYPE_REQUEST>\r
+         <spon:ORDER_NUMBER>000009</spon:ORDER_NUMBER>\r
+         <spon:TYPE_REQUEST>1</spon:TYPE_REQUEST>\r
       </spon:CONSULTA_PEDIDO_VENDA>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/CONSULTA_PEDIDO_VENDA"/></con:call></con:operation><con:operation id="c89851ca-5c46-44a4-b5de-ad3b37009475" isOneWay="false" action="http://spon4944:15901/EXCLUI_PEDIDO_VENDA" name="EXCLUI_PEDIDO_VENDA" bindingOperationName="EXCLUI_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="e8f36c86-462b-4ef1-8eef-aa43d91ddb4c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/CONSULTA_PEDIDO_VENDA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="1b7b2af2-7f36-4824-b2e6-b0330e478627" isOneWay="false" action="http://spon4944:15901/EXCLUI_PEDIDO_COMPRA" name="EXCLUI_PEDIDO_COMPRA" bindingOperationName="EXCLUI_PEDIDO_COMPRA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="aac151f9-fcf4-4b52-84cf-caacfebcffd9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <spon:EXCLUI_PEDIDO_COMPRA>\r
+         <spon:EMPRESA>?</spon:EMPRESA>\r
+         <spon:FILIAL>?</spon:FILIAL>\r
+         <spon:ORDER_NUMBER>?</spon:ORDER_NUMBER>\r
+      </spon:EXCLUI_PEDIDO_COMPRA>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/EXCLUI_PEDIDO_COMPRA"/></con:call></con:operation><con:operation id="b6154104-277a-4399-ac3a-f40181337b58" isOneWay="false" action="http://spon4944:15901/EXCLUI_PEDIDO_VENDA" name="EXCLUI_PEDIDO_VENDA" bindingOperationName="EXCLUI_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5593a983-fc65-43f5-927a-92cc8aa93f58" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:EXCLUI_PEDIDO_VENDA>\r
-         <!--Optional:-->\r
          <spon:EMPRESA>?</spon:EMPRESA>\r
-         <!--Optional:-->\r
          <spon:FILIAL>?</spon:FILIAL>\r
          <spon:ORDER_NUMBER>?</spon:ORDER_NUMBER>\r
       </spon:EXCLUI_PEDIDO_VENDA>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/EXCLUI_PEDIDO_VENDA"/></con:call></con:operation><con:operation id="1f15c03e-ef26-4b6b-b193-60ec8769702a" isOneWay="false" action="http://spon4944:15901/INCLUI_PEDIDO_VENDA" name="INCLUI_PEDIDO_VENDA" bindingOperationName="INCLUI_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="7843c3b4-f3a7-4ee4-b9bf-4a2f79ec9c42" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/EXCLUI_PEDIDO_VENDA"/></con:call></con:operation><con:operation id="bbaf0eb7-c61e-4f88-b96b-e2717baeed1f" isOneWay="false" action="http://spon4944:15901/INCLUI_PEDIDO_COMPRA" name="INCLUI_PEDIDO_COMPRA" bindingOperationName="INCLUI_PEDIDO_COMPRA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d95dea26-f86a-43e6-bfb2-3ce4533ec025" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <spon:INCLUI_PEDIDO_COMPRA>\r
+         <spon:EMPRESA></spon:EMPRESA>\r
+         <spon:FILIAL></spon:FILIAL>\r
+         <spon:C7_FORNECE></spon:C7_FORNECE>\r
+         <spon:C7_LOJA></spon:C7_LOJA>\r
+         <spon:C7_COND></spon:C7_COND>\r
+         <spon:C7_ITENS>\r
+            <spon:PRODUTOS>\r
+               <!--Zero or more repetitions:-->\r
+               <spon:DADOS_ITEM_COMPRA>\r
+                  <spon:C7_PRECO></spon:C7_PRECO>\r
+                  <spon:C7_PRODUTO></spon:C7_PRODUTO>\r
+                  <spon:C7_QUANT></spon:C7_QUANT>\r
+               </spon:DADOS_ITEM_COMPRA>\r
+            </spon:PRODUTOS>\r
+         </spon:C7_ITENS>\r
+      </spon:INCLUI_PEDIDO_COMPRA>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/INCLUI_PEDIDO_COMPRA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="c68ba1ee-53d2-465a-ba1a-c08b5e7356c1" isOneWay="false" action="http://spon4944:15901/INCLUI_PEDIDO_VENDA" name="INCLUI_PEDIDO_VENDA" bindingOperationName="INCLUI_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b24c630f-8414-4579-81d2-301ca923a0a1" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:INCLUI_PEDIDO_VENDA>\r
-         <!--Optional:-->\r
          <spon:EMPRESA></spon:EMPRESA>\r
-         <!--Optional:-->\r
          <spon:FILIAL></spon:FILIAL>\r
          <spon:C5_CLIENTE>000001</spon:C5_CLIENTE>\r
          <spon:C5_LOJACLI>01</spon:C5_LOJACLI>\r
-         <!--Optional:-->\r
          <spon:C5_CONDPAG></spon:C5_CONDPAG>\r
          <spon:C6_ITENS>\r
             <spon:PRODUTOS>\r
                <!--Zero or more repetitions:-->\r
                <spon:DADOS_ITEM_VENDA>\r
-                  <!--Optional:-->\r
-                  <spon:C6_PRCVEN></spon:C6_PRCVEN>\r
+                  <spon:C6_PRCVEN>12</spon:C6_PRCVEN>\r
                   <spon:C6_PRODUTO>PA.01.001</spon:C6_PRODUTO>\r
                   <spon:C6_QTDVEN>10</spon:C6_QTDVEN>\r
-                  <!--Optional:-->\r
-                  <spon:C6_TES></spon:C6_TES>\r
+                  <spon:C6_TES>512</spon:C6_TES>\r
                </spon:DADOS_ITEM_VENDA>\r
-                              <spon:DADOS_ITEM_VENDA>
-                  <!--Optional:-->
-                  <spon:C6_PRCVEN></spon:C6_PRCVEN>
-                  <spon:C6_PRODUTO>PA.01.002</spon:C6_PRODUTO>
-                  <spon:C6_QTDVEN>10</spon:C6_QTDVEN>
-                  <!--Optional:-->
-                  <spon:C6_TES>512</spon:C6_TES>
-               </spon:DADOS_ITEM_VENDA>
             </spon:PRODUTOS>\r
          </spon:C6_ITENS>\r
       </spon:INCLUI_PEDIDO_VENDA>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/INCLUI_PEDIDO_VENDA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="09f809be-8ddd-4814-a6cf-70bc26f77681" isOneWay="false" action="http://spon4944:15901/LIBERA_PEDIDO_VENDA" name="LIBERA_PEDIDO_VENDA" bindingOperationName="LIBERA_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5b7429df-2094-4e90-b582-eddb97901aaf" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/INCLUI_PEDIDO_VENDA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="0f10f6f5-7b63-4173-a49a-e0eab87fe559" isOneWay="false" action="http://spon4944:15901/LIBERA_PEDIDO_VENDA" name="LIBERA_PEDIDO_VENDA" bindingOperationName="LIBERA_PEDIDO_VENDA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b13f06fd-dcd0-4e3c-9150-f42f6ce6f6fb" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:LIBERA_PEDIDO_VENDA>\r
-         <!--Optional:-->\r
          <spon:EMPRESA></spon:EMPRESA>\r
-         <!--Optional:-->\r
          <spon:FILIAL></spon:FILIAL>\r
-         <spon:ORDER_NUMBER>000008</spon:ORDER_NUMBER>\r
-         <!--Optional:-->\r
-         <!--spon:RELEASE_TYPE>ORDER+CREDIT+STOCK</spon:RELEASE_TYPE-->\r
-         <spon:RELEASE_TYPE>ORDER+CREDIT+STOCK</spon:RELEASE_TYPE>
+         <spon:ORDER_NUMBER>000011</spon:ORDER_NUMBER>\r
+         <spon:RELEASE_TYPE>CREDIT+STOCK</spon:RELEASE_TYPE>\r
       </spon:LIBERA_PEDIDO_VENDA>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/LIBERA_PEDIDO_VENDA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="bd2d7119-632d-45bc-9596-9c234451d82d" isOneWay="false" action="http://spon4944:15901/PESQUISA_CLIENTE" name="PESQUISA_CLIENTE" bindingOperationName="PESQUISA_CLIENTE" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dad64952-df97-450b-9457-c278c28a7d5f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/LIBERA_PEDIDO_VENDA"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="fe695dbd-4ef6-4a43-8cf9-e97c50f6a50c" isOneWay="false" action="http://spon4944:15901/PESQUISA_CLIENTE" name="PESQUISA_CLIENTE" bindingOperationName="PESQUISA_CLIENTE" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bee4ca88-f0a9-4665-8035-7578e88d0e8a" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:PESQUISA_CLIENTE>\r
-         <!--Optional:-->\r
-         <spon:EMPRESA>?</spon:EMPRESA>\r
-         <!--Optional:-->\r
-         <spon:FILIAL>?</spon:FILIAL>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_SA1>?</spon:FIELDS_SA1>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_DA0>?</spon:FIELDS_DA0>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_DA1>?</spon:FIELDS_DA1>\r
-         <!--Optional:-->\r
-         <spon:WHERE_SA1>?</spon:WHERE_SA1>\r
-         <!--Optional:-->\r
-         <spon:WHERE_DA1>?</spon:WHERE_DA1>\r
-         <!--Optional:-->\r
-         <spon:SEND_DA0>?</spon:SEND_DA0>\r
-         <!--Optional:-->\r
-         <spon:TYPE_RESPONSE>?</spon:TYPE_RESPONSE>\r
+         <spon:EMPRESA>99</spon:EMPRESA>\r
+         <spon:FILIAL>01</spon:FILIAL>\r
+         <spon:FIELDS_SA1></spon:FIELDS_SA1>\r
+         <spon:FIELDS_DA0></spon:FIELDS_DA0>\r
+         <spon:FIELDS_DA1></spon:FIELDS_DA1>\r
+         <spon:WHERE_SA1></spon:WHERE_SA1>\r
+         <spon:WHERE_DA1></spon:WHERE_DA1>\r
+         <spon:SEND_DA0>1</spon:SEND_DA0>\r
+         <spon:TYPE_RESPONSE></spon:TYPE_RESPONSE>\r
       </spon:PESQUISA_CLIENTE>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_CLIENTE"/></con:call></con:operation><con:operation id="38308cb4-e542-4e02-8b8f-42e42d3b35bb" isOneWay="false" action="http://spon4944:15901/PESQUISA_CONDICAO_PAGTO" name="PESQUISA_CONDICAO_PAGTO" bindingOperationName="PESQUISA_CONDICAO_PAGTO" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="6985b3df-876e-49da-add2-bb2f1ccf1e04" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_CLIENTE"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="929d238c-e707-479b-953b-c22cfa5b9ec0" isOneWay="false" action="http://spon4944:15901/PESQUISA_CONDICAO_PAGTO" name="PESQUISA_CONDICAO_PAGTO" bindingOperationName="PESQUISA_CONDICAO_PAGTO" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="374cd8e4-0e4b-41ff-9b60-1e97776c184a" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:PESQUISA_CONDICAO_PAGTO>\r
-         <!--Optional:-->\r
-         <spon:EMPRESA>?</spon:EMPRESA>\r
-         <!--Optional:-->\r
-         <spon:FILIAL>?</spon:FILIAL>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_SE4>?</spon:FIELDS_SE4>\r
-         <!--Optional:-->\r
-         <spon:WHERE_SE4>?</spon:WHERE_SE4>\r
-         <!--Optional:-->\r
-         <spon:TYPE_RESPONSE>?</spon:TYPE_RESPONSE>\r
+         <spon:EMPRESA>99</spon:EMPRESA>\r
+         <spon:FILIAL>01</spon:FILIAL>\r
+         <spon:FIELDS_SE4>E4_CODIGO,E4_TIPO,E4_COND,E4_DESCRI</spon:FIELDS_SE4>\r
+         <spon:WHERE_SE4>E4_CODIGO IN('28D','2X')</spon:WHERE_SE4>\r
+         <spon:TYPE_RESPONSE>1</spon:TYPE_RESPONSE>\r
       </spon:PESQUISA_CONDICAO_PAGTO>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_CONDICAO_PAGTO"/></con:call></con:operation><con:operation id="2a48ed4e-7878-451d-8367-1ade8db96e74" isOneWay="false" action="http://spon4944:15901/PESQUISA_PRODUTO" name="PESQUISA_PRODUTO" bindingOperationName="PESQUISA_PRODUTO" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fd59a8df-d643-4a1e-a173-3429c8b96765" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_CONDICAO_PAGTO"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="1304d09f-ffe1-4a65-9f88-0d5fdac440f2" isOneWay="false" action="http://spon4944:15901/PESQUISA_PRODUTO" name="PESQUISA_PRODUTO" bindingOperationName="PESQUISA_PRODUTO" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dc33344c-5ac3-4453-83c6-e19099813129" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:PESQUISA_PRODUTO>\r
-         <!--Optional:-->\r
-         <spon:EMPRESA>?</spon:EMPRESA>\r
-         <!--Optional:-->\r
-         <spon:FILIAL>?</spon:FILIAL>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_SB1>?</spon:FIELDS_SB1>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_SB2>?</spon:FIELDS_SB2>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_SG1>?</spon:FIELDS_SG1>\r
-         <!--Optional:-->\r
-         <spon:WHERE_SB1>?</spon:WHERE_SB1>\r
-         <!--Optional:-->\r
-         <spon:WHERE_SB2>?</spon:WHERE_SB2>\r
-         <!--Optional:-->\r
-         <spon:WHERE_SG1>?</spon:WHERE_SG1>\r
-         <!--Optional:-->\r
-         <spon:SEND_SB2>?</spon:SEND_SB2>\r
-         <!--Optional:-->\r
-         <spon:SEND_SG1>?</spon:SEND_SG1>\r
-         <!--Optional:-->\r
-         <spon:TYPE_RESPONSE>?</spon:TYPE_RESPONSE>\r
+         <spon:EMPRESA>99</spon:EMPRESA>\r
+         <spon:FILIAL>01</spon:FILIAL>\r
+         <spon:FIELDS_SB1></spon:FIELDS_SB1>\r
+         <spon:FIELDS_SB2></spon:FIELDS_SB2>\r
+         <spon:FIELDS_SG1></spon:FIELDS_SG1>\r
+         <spon:WHERE_SB1></spon:WHERE_SB1>\r
+         <spon:WHERE_SB2></spon:WHERE_SB2>\r
+         <spon:WHERE_SG1></spon:WHERE_SG1>\r
+         <spon:SEND_SB2>1</spon:SEND_SB2>\r
+         <spon:SEND_SG1>1</spon:SEND_SG1>\r
+         <spon:TYPE_RESPONSE></spon:TYPE_RESPONSE>\r
       </spon:PESQUISA_PRODUTO>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_PRODUTO"/></con:call></con:operation><con:operation id="494846ae-12e8-41c1-9035-9dbe14151e6d" isOneWay="false" action="http://spon4944:15901/PESQUISA_TRANSPORTADORA" name="PESQUISA_TRANSPORTADORA" bindingOperationName="PESQUISA_TRANSPORTADORA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bad25601-4546-451f-ae40-5f621d0a8635" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_PRODUTO"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="37759c9b-e257-4231-828c-4c8059295a56" isOneWay="false" action="http://spon4944:15901/PESQUISA_TRANSPORTADORA" name="PESQUISA_TRANSPORTADORA" bindingOperationName="PESQUISA_TRANSPORTADORA" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3e91d6a9-17e5-4c8b-b176-cb8ae33ada67" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://spon4944:15901/ws/INDTA001.apw</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:spon="http://spon4944:15901/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
       <spon:PESQUISA_TRANSPORTADORA>\r
-         <!--Optional:-->\r
-         <spon:EMPRESA>?</spon:EMPRESA>\r
-         <!--Optional:-->\r
-         <spon:FILIAL>?</spon:FILIAL>\r
-         <!--Optional:-->\r
-         <spon:FIELDS_SA4>?</spon:FIELDS_SA4>\r
-         <!--Optional:-->\r
-         <spon:WHERE_SA4>?</spon:WHERE_SA4>\r
-         <!--Optional:-->\r
-         <spon:TYPE_RESPONSE>?</spon:TYPE_RESPONSE>\r
+         <spon:EMPRESA>99</spon:EMPRESA>\r
+         <spon:FILIAL>01</spon:FILIAL>\r
+         <spon:FIELDS_SA4>A4_FILIAL,A4_COD,A4_NOME,A4_NREDUZ</spon:FIELDS_SA4>\r
+         <spon:WHERE_SA4>A4_COD = 000002</spon:WHERE_SA4>\r
+         <spon:TYPE_RESPONSE>2</spon:TYPE_RESPONSE>\r
       </spon:PESQUISA_TRANSPORTADORA>\r
    </soapenv:Body>\r
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_TRANSPORTADORA"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://spon4944:15901/PESQUISA_TRANSPORTADORA"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
